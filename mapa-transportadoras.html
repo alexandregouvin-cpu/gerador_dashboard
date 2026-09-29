@@ -153,17 +153,6 @@
   .bar-val{text-align:right;color:var(--text-secondary);font-size:12px;white-space:nowrap;}
   .bar-val b{color:#fff;font-family:'Poppins',sans-serif;font-size:14px;}
 
-  .rank-panel{flex:1 1 0;min-height:300px;}
-  .rank-scroll{overflow:auto;flex:1 1 0;min-height:0;}
-  .rank-head,.rank-item{display:grid;grid-template-columns:44px minmax(0,1fr) 70px 90px;gap:8px;align-items:center;padding:7px 4px;}
-  .rank-head{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);font-weight:700;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-2);}
-  .rank-item{font-size:13px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;}
-  .rank-item:hover{background:rgba(155,240,195,0.05);}
-  .rank-item.active{background:rgba(250,235,10,0.08);}
-  .rank-item .sig{font-weight:800;font-family:'Poppins',sans-serif;}
-  .rank-item .nm{color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .rank-item .n{text-align:right;font-weight:700;}
-  .rank-head .n{text-align:right;}
 
   .panel{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;overflow:hidden;box-shadow:0 8px 20px var(--shadow);}
   .panel-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
@@ -206,7 +195,7 @@
   footer{padding:12px 32px;text-align:center;font-size:11px;color:var(--text-secondary);opacity:.7;}
   .hide{display:none !important;}
 
-  body.mode-tv #setupArea, body.mode-tv .generate-bar, body.mode-tv .tables-row, body.mode-tv #notFoundPanel, body.mode-tv #corrPanel{display:none !important;}
+  body.mode-tv #setupArea, body.mode-tv .generate-bar, body.mode-tv .tables-row, body.mode-tv #corrPanel{display:none !important;}
   body.embedded #setupArea{display:none !important;}
 
   @media (max-width: 1000px){
@@ -217,7 +206,6 @@
     .brand img{height:44px;}
     main, body.mode-tv main{padding:16px;}
     .bar-row{grid-template-columns:84px minmax(0,1fr) 80px;}
-    .rank-head,.rank-item{grid-template-columns:36px minmax(0,1fr) 56px 70px;}
     .mapping-row select{min-width:0;width:100%;}
     .mapping-row > div{flex:1 1 100%;}
     #uploadBox > div:first-child{flex-direction:column;}
@@ -241,15 +229,63 @@
   .stack i{display:block;height:100%;min-width:2px;}
   .stack i:last-child{border-radius:0 4px 4px 0;}
   .stack.thin{height:6px;margin-top:5px;}
-  .rank-head,.rank-item{grid-template-columns:40px minmax(0,1fr) 72px 60px;}
-  .rank-item .nm-wrap{min-width:0;}
   .bar-row{grid-template-columns:110px minmax(0,1fr) 120px;}
   .transp-cell{display:flex;align-items:center;gap:8px;min-width:0;}
   .transp-cell a{color:#fff;text-decoration:none;border-bottom:1px dotted var(--text-secondary);overflow:hidden;text-overflow:ellipsis;}
   @media (max-width: 640px){
     .bar-row{grid-template-columns:84px minmax(0,1fr) 96px;}
-    .rank-head,.rank-item{grid-template-columns:34px minmax(0,1fr) 62px 44px;}
   }
+  .tr-panel{flex:1 1 auto;}
+  .tr-row{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:4px 12px;align-items:center;padding:7px 6px;border-radius:8px;cursor:pointer;}
+  .tr-row:hover{background:rgba(155,240,195,0.05);}
+  .tr-row.active{background:rgba(250,235,10,0.08);}
+  .tr-row.off{opacity:.4;}
+  .tr-name{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;min-width:0;}
+  .tr-name span.nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tr-val{text-align:right;font-size:12px;color:var(--text-secondary);white-space:nowrap;}
+  .tr-val b{color:#fff;font-family:'Poppins',sans-serif;font-size:14px;}
+  .tr-bar{grid-column:1 / -1;height:6px;border-radius:0 3px 3px 0;background:rgba(255,255,255,0.06);overflow:hidden;}
+  .tr-bar i{display:block;height:100%;border-radius:0 3px 3px 0;}
+  .tr-meta{grid-column:1 / -1;font-size:11px;color:var(--text-secondary);margin-top:-2px;}
+  .uf-panel{margin-bottom:20px;}
+  .uf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 22px;}
+  .uf-item{padding:9px 8px;border-radius:8px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .uf-item:hover{background:rgba(155,240,195,0.05);}
+  .uf-item.active{background:rgba(250,235,10,0.08);}
+  .uf-item.empty{opacity:.45;}
+  .uf-top{display:flex;align-items:baseline;gap:8px;font-size:13px;margin-bottom:6px;}
+  .uf-top .sig{font-family:'Poppins',sans-serif;font-weight:800;width:26px;}
+  .uf-top .nm{color:var(--text-secondary);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .uf-top .n{font-weight:700;white-space:nowrap;}
+  .uf-top .n small{color:var(--text-secondary);font-weight:500;}
+  .uf-item .stack{height:8px;width:100%;}
+  .tooltip-overlay .tooltip-sec{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);font-weight:800;margin:10px 0 4px;}
+  .tooltip-overlay .cli{display:flex;gap:8px;align-items:center;font-size:12px;padding:3px 0;}
+  .tooltip-overlay .cli code{font-family:'Inter',sans-serif;color:var(--accent-mint);font-weight:700;font-size:11.5px;min-width:52px;}
+  .tooltip-overlay .cli span.nm{color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tooltip-overlay{max-width:400px;}
+  .drawer-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;}
+  .drawer-backdrop.open{display:block;}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:min(520px,100%);z-index:9001;transform:translateX(100%);transition:transform .2s ease;
+    background:linear-gradient(160deg,var(--bg-2-hover) 0%,var(--bg-1) 100%);border-left:1.5px solid var(--accent-mint);display:flex;flex-direction:column;box-shadow:-16px 0 36px rgba(0,0,0,.45);}
+  .drawer.open{transform:none;}
+  .drawer-head{display:flex;justify-content:space-between;gap:12px;padding:18px 20px 12px;border-bottom:1px solid var(--border);}
+  .drawer-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent-mint);font-weight:800;}
+  .drawer-head h2{margin:4px 0 2px;font-size:18px;}
+  .drawer-sub{font-size:12.5px;color:var(--text-secondary);}
+  .drawer-close{background:transparent;border:1px solid var(--border);color:#fff;border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:14px;flex-shrink:0;}
+  .drawer-close:hover{border-color:var(--accent-mint);}
+  .drawer-tools{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:10px;}
+  .drawer-tools input{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg-1);color:#fff;font-family:'Inter',sans-serif;}
+  .drawer-tools input::placeholder{color:var(--text-secondary);}
+  .drawer-body{overflow:auto;flex:1;}
+  .drawer-body table{table-layout:fixed;}
+  .drawer-body th:nth-child(1){width:74px;}
+  .drawer-body th:nth-child(3){width:34%;}
+  .drawer-body td{max-width:none;}
+  .drawer-body td.code{color:var(--accent-mint);font-weight:700;}
+  #mapSvg .city{cursor:pointer;}
+  @media (max-width: 640px){ .uf-grid{grid-template-columns:1fr;} .tr-row{grid-template-columns:minmax(0,1fr) 96px;} }
 </style>
 </head>
 <body class="mode-individual">
@@ -324,14 +360,19 @@
           <p class="sub">Clientes por transportadora · clique para filtrar</p>
           <div class="bars" id="regionBars"></div>
         </div>
-        <div class="chart-panel rank-panel">
-          <h3>Por estado</h3>
-          <div class="rank-scroll">
-            <div class="rank-head"><div>UF</div><div>Estado</div><div class="n">Clientes</div><div class="n">Transp.</div></div>
-            <div id="ufRank"></div>
-          </div>
+        <div class="chart-panel tr-panel">
+          <h3>Por transportadora</h3>
+          <p class="sub">Clientes · cidades · estados — clique para filtrar</p>
+          <div id="transpBars"></div>
         </div>
       </div>
+    </div>
+
+    <div class="chart-panel uf-panel">
+      <div class="uf-panel-head">
+        <div><h3>Por estado</h3><p class="sub">Divisão dos clientes entre as transportadoras em cada estado · clique para filtrar</p></div>
+      </div>
+      <div class="uf-grid" id="ufGrid"></div>
     </div>
 
     <div class="tables-row">
@@ -355,13 +396,6 @@
       </div>
     </div>
 
-    <div class="panel hide" id="notFoundPanel">
-      <div class="panel-header"><h2>⚠️ Cidades não localizadas no mapa</h2><span class="count" id="countNF"></span></div>
-      <p style="margin:12px 18px 0;font-size:12.5px;color:var(--text-secondary);">Estas cidades não bateram com a base de municípios do IBGE (nome escrito diferente, UF inválida ou endereço no exterior). Os clientes entram nas contagens, mas não aparecem no mapa.</p>
-      <div class="table-scroll" style="max-height:260px;">
-        <table><thead><tr><th>Cidade (planilha)</th><th>UF</th><th>Transportadora</th><th class="num">Clientes</th></tr></thead><tbody id="nfBody"></tbody></table>
-      </div>
-    </div>
     <div class="panel hide" id="corrPanel">
       <div class="panel-header"><h2>✏️ Nomes de cidade corrigidos automaticamente</h2><span class="count" id="countCorr"></span></div>
       <p style="margin:12px 18px 0;font-size:12.5px;color:var(--text-secondary);">Cidades com erro de digitação na planilha, associadas ao município mais parecido da mesma UF. Vale conferir e corrigir o cadastro.</p>
@@ -371,13 +405,25 @@
     </div>
 
     <div class="generate-bar" id="generateBar">
-      <p>Baixe este dashboard como um arquivo HTML único, com os dados já embutidos (só cidade, UF, transportadora e quantidade de clientes), para abrir em qualquer navegador ou deixar na TV.</p>
+      <p>Baixe este dashboard como um arquivo HTML único, com os dados já embutidos (cidade, UF, transportadora e código e nome dos clientes), para abrir em qualquer navegador ou deixar na TV.</p>
       <button class="btn big" id="btnDownload">⬇ Baixar dashboard</button>
     </div>
   </div>
 </main>
 <footer id="footerInfo">Apis Flora · Base de municípios: IBGE</footer>
 <div class="tooltip-overlay" id="tooltip"></div>
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <div><div class="drawer-kicker">Clientes na cidade</div><h2 id="drawerTitle"></h2><div class="drawer-sub" id="drawerSub"></div></div>
+    <button class="drawer-close" id="drawerClose" aria-label="Fechar">✕</button>
+  </div>
+  <div class="drawer-tools">
+    <input type="text" id="drawerSearch" placeholder="Buscar por código ou nome...">
+    <div class="t-legend" id="drawerChips"></div>
+  </div>
+  <div class="drawer-body"><table><thead><tr><th>Código</th><th>Cliente</th><th>Transportadora</th></tr></thead><tbody id="drawerBody"></tbody></table></div>
+</aside>
 
 <script>
 const EMBEDDED = null;
@@ -531,9 +577,10 @@ function buildRecords(rawRows){
     }
     const k = tk+"#"+key;
     const n = +r.n || 1;
-    if(byKey.has(k)){ byKey.get(k).n += n; return; }
+    const cl = r.cl || (r.k || r.nm ? [[r.k||"", r.nm||""]] : []);
+    if(byKey.has(k)){ const o = byKey.get(k); o.n += n; cl.forEach(x=>o.cl.push(x)); return; }
     byKey.set(k, {tk, cidade:res.cidade, uf:res.uf, regiao:UF_REGIAO[res.uf]||"", key,
-      lat:res.lat, lon:res.lon, found:res.found, fuzzy:res.fuzzy, n, raw:{c:r.c, u:r.u}});
+      lat:res.lat, lon:res.lon, found:res.found, fuzzy:res.fuzzy, n, cl:cl.slice(), raw:{c:r.c, u:r.u}});
   });
   const out = [...byKey.values()];
   out.forEach(r=>r.t = nameByTk.get(r.tk));
@@ -597,6 +644,8 @@ function fillColumnSelects(){
     ativo: findCol(cols, [c=>c==="ATIVO"]),
     codigo: findCol(cols, [c=>c==="CODIGO DO PN"]),
     codTransp: findCol(cols, [c=>c.replace(/ /g,"")==="CODIGOTRANSPORTADORA"]),
+    nomeCli: findCol(cols, [c=>c==="NOME DO PN", c=>c==="CLIENTE", c=>c==="NOME DO CLIENTE", c=>c==="RAZAO SOCIAL"]),
+    codCli: findCol(cols, [c=>c==="CODIGO DO PN", c=>c==="CODIGO DO CLIENTE", c=>c==="COD CLIENTE"]),
     hidden: rows.filter(r=>r.__hidden).length,
     total: rows.length
   };
@@ -630,7 +679,8 @@ document.getElementById("btnProcess").addEventListener("click", ()=>{
     let t = String(r[cT]??"").trim();
     // Nome vazio ou "0" (PROCX sem resultado): usa o código da transportadora
     if((!t || t==="0" || /^#N/.test(t)) && sheetInfo.codTransp && r[sheetInfo.codTransp]) t = String(r[sheetInfo.codTransp]).trim().toUpperCase()+" (sem nome)";
-    return {t, c:r[cC], u: cU ? r[cU] : "", n:1};
+    return {t, c:r[cC], u: cU ? r[cU] : "", n:1,
+      k: sheetInfo.codCli ? String(r[sheetInfo.codCli]??"").trim() : "", nm: sheetInfo.nomeCli ? String(r[sheetInfo.nomeCli]??"").replace(/\s+/g," ").trim() : ""};
   }).filter(r=>r.t || String(r.c).trim());
   if(!raw.length){ setStatus("Nenhuma linha sobrou depois dos filtros.", "error"); return; }
   RECORDS = buildRecords(raw);
@@ -640,7 +690,7 @@ document.getElementById("btnProcess").addEventListener("click", ()=>{
   setStatus(`${fmt(raw.length)} clientes considerados de ${fmt(all.length)} linhas da planilha` +
     (NOTE ? ` (filtros: ${esc(NOTE)})` : "") +
     (CORRECTIONS.length ? ` · ${fmt(CORRECTIONS.reduce((s,c)=>s+c.n,0))} com nome de cidade corrigido automaticamente` : "") +
-    (nfClientes ? ` · <b>${fmt(nfClientes)}</b> com cidade não localizada no mapa (listas no fim da página).` : "."), nfClientes ? "warn" : "");
+    (nfClientes ? ` · ${fmt(nfClientes)} com cidade fora do Brasil ou não localizada (contam nos totais, mas não aparecem no mapa).` : "."), nfClientes ? "warn" : "");
   initDashboard();
 });
 
@@ -693,8 +743,9 @@ function aggregate(rows){
   };
   rows.forEach(r=>{
     clientes += r.n;
-    if(!cities.has(r.key)) cities.set(r.key,{key:r.key,cidade:r.cidade,uf:r.uf,regiao:r.regiao,lat:r.lat,lon:r.lon,found:r.found,clientes:0,byT:new Map()});
+    if(!cities.has(r.key)) cities.set(r.key,{key:r.key,cidade:r.cidade,uf:r.uf,regiao:r.regiao,lat:r.lat,lon:r.lon,found:r.found,clientes:0,byT:new Map(),cl:[]});
     const c = cities.get(r.key); c.clientes += r.n; c.byT.set(r.t,(c.byT.get(r.t)||0)+r.n);
+    r.cl.forEach(x=>c.cl.push([x[0],x[1],r.t]));
     if(r.uf) bump(ufs, r.uf, r.t, r.n, r.key);
     if(r.regiao) bump(regs, r.regiao, r.t, r.n, r.key);
     if(!transp.has(r.t)) transp.set(r.t,{clientes:0,cities:new Set(),ufs:new Set(),regs:new Set()});
@@ -763,9 +814,9 @@ function render(){
   renderLegend();
   renderMap(agg);
   renderRegions(agg);
-  renderUfRank(agg);
+  renderTranspBars(agg);
+  renderUfGrid(agg);
   renderTables(agg);
-  renderNotFound(rows);
   document.getElementById("fTransp").value = filters.transp;
   document.getElementById("fRegiao").value = filters.regiao;
   document.getElementById("fUf").value = filters.uf;
@@ -835,7 +886,7 @@ document.addEventListener("mousemove", e=>{
   if(t.classList && t.classList.contains("city") && lastAgg){
     const c = lastAgg.cities.get(t.dataset.key);
     if(!c) return hideTip();
-    return showTip(e, `<div class="tooltip-title">${esc(c.cidade)} / ${c.uf} · ${fmt(c.clientes)} cliente${c.clientes>1?"s":""}</div>` + tRows(c.byT, c.clientes, 8));
+    return showTip(e, `<div class="tooltip-title">${esc(c.cidade)} / ${c.uf} · ${fmt(c.clientes)} cliente${c.clientes>1?"s":""}</div>` + tRows(c.byT, c.clientes, 8) + clientsTip(c));
   }
   if(t.classList && t.classList.contains("uf") && lastAgg){
     const uf = t.dataset.uf, u = lastAgg.ufs.get(uf);
@@ -848,6 +899,57 @@ document.addEventListener("mousemove", e=>{
   if(tipEl) return showTip(e, tipEl.dataset.tip);
   hideTip();
 });
+function sortClients(cl){ return cl.slice().sort((a,b)=>String(a[1]).localeCompare(String(b[1]),"pt-BR")); }
+function clientsTip(c){
+  if(!c.cl.length) return "";
+  const LIM = 12, list = sortClients(c.cl), shown = list.slice(0, LIM);
+  return `<div class="tooltip-sec">Clientes</div>` + shown.map(([k,nm,t])=>
+    `<div class="cli"><span class="dotc" style="background:${COLOR.get(t)}"></span><code>${esc(k)||"—"}</code><span class="nm">${esc(nm)||"(sem nome)"}</span></div>`).join("") +
+    `<div class="more">${list.length>LIM ? `+ ${fmt(list.length-LIM)} cliente${list.length-LIM>1?"s":""} · ` : ""}clique no círculo para ver a lista completa</div>`;
+}
+
+/* ---------- Painel lateral com a lista de clientes da cidade ---------- */
+let drawerCity = null, drawerT = "";
+function openDrawer(c){
+  drawerCity = c; drawerT = "";
+  document.getElementById("drawerTitle").textContent = `${c.cidade} / ${c.uf}`;
+  document.getElementById("drawerSub").textContent = `${fmt(c.clientes)} cliente${c.clientes>1?"s":""} · ${c.byT.size} transportadora${c.byT.size>1?"s":""}`;
+  document.getElementById("drawerSearch").value = "";
+  renderDrawer();
+  document.getElementById("drawer").classList.add("open");
+  document.getElementById("drawer").setAttribute("aria-hidden","false");
+  document.getElementById("drawerBackdrop").classList.add("open");
+  hideTip();
+}
+function closeDrawer(){
+  document.getElementById("drawer").classList.remove("open");
+  document.getElementById("drawer").setAttribute("aria-hidden","true");
+  document.getElementById("drawerBackdrop").classList.remove("open");
+}
+function renderDrawer(){
+  const c = drawerCity; if(!c) return;
+  document.getElementById("drawerChips").innerHTML = c.byT.size>1 ? sortedByT(c.byT).map(([t,n])=>
+    `<div class="it ${drawerT && drawerT!==t?"off":""}" data-dt="${esc(t)}"><span class="dotc" style="background:${COLOR.get(t)}"></span><span class="nm" title="${esc(t)}">${esc(t)}</span><b style="color:#fff">${fmt(n)}</b></div>`).join("") : "";
+  const q = normalize(document.getElementById("drawerSearch").value);
+  const list = sortClients(c.cl).filter(([k,nm,t])=>(!drawerT || t===drawerT) && (!q || normalize(k).includes(q) || normalize(nm).includes(q)));
+  document.getElementById("drawerBody").innerHTML = list.length ? list.map(([k,nm,t])=>
+    `<tr><td class="code">${esc(k)||"—"}</td><td title="${esc(nm)}">${esc(nm)||"(sem nome)"}</td><td class="muted-cell" title="${esc(t)}"><span class="dotc" style="background:${COLOR.get(t)};margin-right:6px"></span>${esc(t)}</td></tr>`).join("")
+    : `<tr><td colspan="3" class="empty-state">${c.cl.length ? "Nenhum cliente encontrado." : "A planilha não tem as colunas de código/nome do cliente."}</td></tr>`;
+}
+document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+document.getElementById("drawerBackdrop").addEventListener("click", closeDrawer);
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeDrawer(); });
+document.getElementById("drawerSearch").addEventListener("input", renderDrawer);
+document.getElementById("drawerChips").addEventListener("click", e=>{
+  const it = e.target.closest("[data-dt]"); if(!it) return;
+  drawerT = drawerT===it.dataset.dt ? "" : it.dataset.dt; renderDrawer();
+});
+els.svg.addEventListener("click", e=>{
+  if(!e.target.classList.contains("city") || !lastAgg) return;
+  const c = lastAgg.cities.get(e.target.dataset.key);
+  if(c) openDrawer(c);
+});
+
 function showTip(e, html){
   const tip = els.tooltip;
   tip.innerHTML = html; tip.style.display = "block";
@@ -870,16 +972,27 @@ function renderRegions(agg){
     </div>`).join("");
 }
 
-function renderUfRank(agg){
-  const max = Math.max(1, ...[...agg.ufs.values()].map(v=>v.clientes));
+function renderTranspBars(agg){
+  const list = [...agg.transp.entries()].sort((a,b)=>b[1].clientes-a[1].clientes);
+  const max = Math.max(1, ...list.map(([,v])=>v.clientes));
+  document.getElementById("transpBars").innerHTML = list.length ? list.map(([t,v])=>`
+    <div class="tr-row ${filters.transp===t?"active":""}" data-transp="${esc(t)}" title="${esc(t)}">
+      <div class="tr-name"><span class="dotc" style="background:${COLOR.get(t)}"></span><span class="nm">${esc(t)}</span></div>
+      <div class="tr-val"><b>${fmt(v.clientes)}</b> · ${pct(v.clientes, agg.clientes)}</div>
+      <div class="tr-bar"><i style="width:${Math.max(1.5, v.clientes/max*100)}%;background:${COLOR.get(t)}"></i></div>
+      <div class="tr-meta">${fmt(v.cities.size)} cidade${v.cities.size>1?"s":""} · ${v.ufs.size} UF${v.ufs.size>1?"s":""}</div>
+    </div>`).join("") : `<div class="empty-state">Nenhuma transportadora com os filtros atuais.</div>`;
+}
+
+function renderUfGrid(agg){
   const list = Object.keys(UF_NOME).map(u=>({u, o: agg.ufs.get(u)}))
     .filter(d=>d.o || !filters.regiao || UF_REGIAO[d.u]===filters.regiao)
     .sort((a,b)=>(b.o?b.o.clientes:0)-(a.o?a.o.clientes:0) || a.u.localeCompare(b.u));
-  document.getElementById("ufRank").innerHTML = list.map(({u,o})=>`
-    <div class="rank-item ${filters.uf===u?"active":""}" data-uf="${u}">
-      <div class="sig">${u}</div>
-      <div class="nm-wrap"><div class="nm">${esc(UF_NOME[u])}</div>${o ? stackHtml(o.byT, o.clientes, max, true) : ""}</div>
-      <div class="n">${o?fmt(o.clientes):"<span class='muted-cell'>0</span>"}</div><div class="n">${o?o.byT.size:"<span class='muted-cell'>0</span>"}</div>
+  document.getElementById("ufGrid").innerHTML = list.map(({u,o})=>`
+    <div class="uf-item ${filters.uf===u?"active":""} ${o?"":"empty"}" data-uf="${u}">
+      <div class="uf-top"><span class="sig">${u}</span><span class="nm">${esc(UF_NOME[u])}</span>
+        <span class="n">${o?fmt(o.clientes):0} <small>cli · ${o?o.byT.size:0} transp.</small></span></div>
+      ${o ? stackHtml(o.byT, o.clientes, o.clientes) : `<div class="stack" style="width:100%"></div>`}
     </div>`).join("");
 }
 
@@ -919,15 +1032,6 @@ function renderCorrections(){
   document.getElementById("corrBody").innerHTML = CORRECTIONS.map(c=>
     `<tr><td>${esc(c.c)}</td><td>${esc(c.u)||"—"}</td><td>${esc(c.to)}</td><td class="num">${fmt(c.n)}</td></tr>`).join("");
 }
-function renderNotFound(rows){
-  const nf = rows.filter(r=>!r.found).sort((a,b)=>b.n-a.n);
-  const tot = nf.reduce((s,r)=>s+r.n,0);
-  document.getElementById("notFoundPanel").classList.toggle("hide", !nf.length);
-  document.getElementById("countNF").textContent = `${fmt(tot)} clientes`;
-  document.getElementById("nfBody").innerHTML = nf.slice(0,500).map(r=>
-    `<tr><td>${esc(r.raw.c)||"(vazio)"}</td><td>${esc(r.raw.u)||"—"}</td><td>${esc(r.t)}</td><td class="num">${fmt(r.n)}</td></tr>`).join("");
-}
-
 /* ---------- Interações ---------- */
 function setFilter(k, v){ filters[k] = v; render(); }
 document.getElementById("fSearch").addEventListener("input", e=>setFilter("search", e.target.value));
@@ -948,9 +1052,13 @@ document.getElementById("regionBars").addEventListener("click", e=>{
   const row = e.target.closest("[data-regiao]"); if(!row) return;
   setRegiao(filters.regiao===row.dataset.regiao ? "" : row.dataset.regiao);
 });
-document.getElementById("ufRank").addEventListener("click", e=>{
+document.getElementById("ufGrid").addEventListener("click", e=>{
   const row = e.target.closest("[data-uf]"); if(!row) return;
   setFilter("uf", filters.uf===row.dataset.uf ? "" : row.dataset.uf);
+});
+document.getElementById("transpBars").addEventListener("click", e=>{
+  const row = e.target.closest("[data-transp]"); if(!row) return;
+  setFilter("transp", filters.transp===row.dataset.transp ? "" : row.dataset.transp);
 });
 document.getElementById("tLegend").addEventListener("click", e=>{
   const it = e.target.closest("[data-legend]"); if(!it || it.dataset.legend==="__outras") return;
@@ -978,7 +1086,7 @@ document.getElementById("modeToggle").addEventListener("click", e=>{
 
 document.getElementById("btnDownload").addEventListener("click", ()=>{
   const payload = {generated: (GENERATED_AT||new Date()).toISOString(), note: NOTE,
-    rows: RECORDS.map(r=>({t:r.t, c:r.found ? r.cidade : r.raw.c, u:r.found ? r.uf : r.raw.u, n:r.n}))};
+    rows: RECORDS.map(r=>({t:r.t, c:r.found ? r.cidade : r.raw.c, u:r.found ? r.uf : r.raw.u, n:r.n, cl:r.cl}))};
   const json = JSON.stringify(payload).replace(/</g,"\\u003c");
   const html = TEMPLATE.replace("const EMBEDDED = null;", "const EMBEDDED = " + json + ";");
   const blob = new Blob([html], {type:"text/html;charset=utf-8"});
