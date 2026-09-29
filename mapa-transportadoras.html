@@ -6,6 +6,8 @@
 <title>Apis Flora — Mapa de Transportadoras</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';"></script>
 <style>
   :root{
@@ -324,6 +326,29 @@
   .rg-top .dotc{flex-shrink:0;} .rg-share{flex-shrink:0;}
   body.mode-tv .rg-num{font-size:28px;}
   @media (max-width: 420px){ #regionBars{grid-template-columns:1fr;} }
+  /* mapa 3D */
+  .map3d{position:absolute;inset:0;border-radius:10px;overflow:hidden;cursor:grab;}
+  .map3d canvas{display:block;outline:none;}
+  .map-wrap.is3d #mapSvg{visibility:hidden;}
+  .map-tools{position:absolute;top:8px;right:8px;z-index:3;display:flex;gap:6px;align-items:center;}
+  .mt-seg{display:flex;background:rgba(3,47,33,0.8);border:1px solid rgba(155,240,195,0.25);border-radius:9px;padding:3px;gap:3px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+  .mt-seg button{border:none;background:transparent;color:var(--text-secondary);font:700 11.5px 'Inter',sans-serif;padding:5px 10px;border-radius:6px;cursor:pointer;}
+  .mt-seg button.on{background:var(--accent-mint);color:#022A1D;}
+  .mt-3d{display:flex;gap:4px;}
+  .map-wrap:not(.is3d) .mt-3d{display:none;}
+  .mt-btn{width:30px;height:30px;border-radius:8px;border:1px solid rgba(155,240,195,0.25);background:rgba(3,47,33,0.8);color:var(--accent-mint);font:700 14px 'Inter',sans-serif;cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+  .mt-btn:hover,.mt-seg button:hover:not(.on){border-color:var(--accent-mint);}
+  .mt-btn.on{background:rgba(155,240,195,0.2);color:#fff;border-color:var(--accent-mint);}
+  .mt-btn:focus-visible,.mt-seg button:focus-visible{outline:2px solid var(--accent-yellow);outline-offset:2px;}
+  .map-hint{position:absolute;top:10px;left:10px;z-index:2;font-size:10.5px;color:var(--text-secondary);background:rgba(3,47,33,0.65);border-radius:8px;padding:5px 9px;pointer-events:none;max-width:calc(100% - 260px);}
+  .map-hint b{color:#fff;font-weight:600;}
+  .map-wrap:not(.is3d) .map-hint{display:none;}
+  @media (max-width: 1000px){
+    .map-wrap.is3d{aspect-ratio:1 / 1.3;}
+    .map-wrap.is3d .map-legend{position:absolute;left:8px;right:8px;bottom:8px;margin:0;width:auto;padding:8px 10px;gap:14px;}
+    .map-wrap.is3d #mapSvg{position:absolute;inset:0;height:100%;}
+    .map-hint{display:none;}
+  }
 </style>
 </head>
 <body class="mode-individual">
@@ -387,9 +412,22 @@
     <div class="map-row">
       <div class="chart-panel map-panel">
         <h3>Mapa de clientes por transportadora</h3>
-        <p class="sub">Cada círculo é uma cidade com clientes ativos. O tamanho indica o nº de clientes e a cor, a transportadora que atende a maioria deles. Estados mais claros têm mais clientes. Clique num estado para filtrar.</p>
+        <p class="sub">Cada disco é uma cidade com clientes ativos: o tamanho indica o nº de clientes e a cor, a transportadora que atende a maioria deles. No 3D, a altura e o tom do estado mostram quantos clientes ele tem. Clique num estado para filtrar ou numa cidade para ver os clientes.</p>
         <div class="t-legend" id="tLegend"></div>
-        <div class="map-wrap"><svg id="mapSvg" role="img" aria-label="Mapa do Brasil com clientes por cidade e transportadora"></svg>
+        <div class="map-wrap">
+          <div class="map3d" id="map3d" hidden></div>
+          <div class="map-tools" id="mapTools">
+            <div class="mt-seg" role="group" aria-label="Tipo de mapa"><button type="button" id="mv3d" class="on">3D</button><button type="button" id="mv2d">2D</button></div>
+            <div class="mt-3d" id="mt3d">
+              <button type="button" class="mt-btn on" id="m3Rotate" title="Girar automaticamente" aria-label="Girar automaticamente">⟳</button>
+              <button type="button" class="mt-btn" id="m3Top" title="Vista de cima" aria-label="Vista de cima">⬒</button>
+              <button type="button" class="mt-btn" id="m3Home" title="Voltar ao início" aria-label="Voltar ao início">↺</button>
+              <button type="button" class="mt-btn" id="m3In" title="Aproximar" aria-label="Aproximar">+</button>
+              <button type="button" class="mt-btn" id="m3Out" title="Afastar" aria-label="Afastar">−</button>
+            </div>
+          </div>
+          <div class="map-hint" id="mapHint">Arraste para girar · <b>Ctrl + roda</b> para zoom · botão direito para mover · clique no estado para filtrar</div>
+          <svg id="mapSvg" role="img" aria-label="Mapa do Brasil com clientes por cidade e transportadora"></svg>
           <div class="map-legend" id="mapLegend"></div></div>
       </div>
       <div class="side-col">
@@ -744,6 +782,7 @@ function initDashboard(){
   drawBaseMap();
   renderCorrections();
   render();
+  Map3D.start();
 }
 
 /* Grupos de cor: top 5 individualmente + "Outras" */
@@ -841,6 +880,244 @@ function drawBaseMap(){
 }
 
 let lastAgg = null;
+
+/* ---------- Mapa 3D (Three.js): estados em relevo pela quantidade de clientes e cidades como discos
+   luminosos sobre o relevo (tamanho = clientes, cor = transportadora principal). Segue os mesmos filtros do 2D. ---------- */
+const Map3D = (()=>{
+  const wrap = () => document.querySelector(".map-panel .map-wrap");
+  const host = document.getElementById("map3d");
+  let ok = typeof THREE !== "undefined" && THREE.OrbitControls, ready = false, visible = false;
+  let renderer, scene, camera, controls, states = {}, stateList = [], discs, cityKeys = [], cityIdx = new Map(), cityAnim = [];
+  let fly = null, animating = 0, running = false, pendingAgg = null;
+  const api = {userRotate:true};
+  const W = GEO.proj.W, H = GEO.proj.H, CX = W/2, CZ = H/2;
+  const BASE = 3, SMAX = 48;
+  const dummy = ok ? new THREE.Object3D() : null;
+  const HOME = () => (host.clientWidth < 520
+    ? {pos:[-80, 1250, 1250], target:[30,0,90]} : {pos:[-110, 760, 900], target:[30,0,70]});
+  const TOP = () => ({pos:[0.1, host.clientWidth < 520 ? 1900 : 1300, 1], target:[0,0,0]});
+  let pref = "3d";
+  try{ pref = localStorage.getItem("mapaTransp.view") || "3d"; }catch(_){}
+
+  function init(){
+    if(!ok || ready) return;
+    try{ renderer = new THREE.WebGLRenderer({antialias:true}); }catch(e){ ok = false; return; }
+    ready = true;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+    host.appendChild(renderer.domElement);
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0B4A36);
+    scene.fog = new THREE.Fog(0x0B4A36, 1600, 3400);
+    camera = new THREE.PerspectiveCamera(40, 1, 1, 6000);
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; controls.dampingFactor = 0.08;
+    controls.enableZoom = false;                         // a roda continua rolando a página; zoom com Ctrl + roda
+    controls.maxPolarAngle = Math.PI*0.47; controls.minDistance = 120; controls.maxDistance = 2600;
+    controls.autoRotateSpeed = 0.5;
+    api.userRotate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    controls.autoRotate = api.userRotate;
+    document.getElementById("m3Rotate").classList.toggle("on", controls.autoRotate);
+
+    scene.add(new THREE.HemisphereLight(0xd8fff0, 0x021D14, 0.85));
+    const sun = new THREE.DirectionalLight(0xffffff, 0.7); sun.position.set(-400, 900, 500); scene.add(sun);
+    const rim = new THREE.DirectionalLight(0x9BF0C3, 0.25); rim.position.set(500, 300, -600); scene.add(rim);
+    const ground = new THREE.Mesh(new THREE.CircleGeometry(1500, 64), new THREE.MeshStandardMaterial({color:0x0A3F2E, roughness:1}));
+    ground.rotation.x = -Math.PI/2; ground.position.y = -0.6; scene.add(ground);
+    const grid = new THREE.GridHelper(2400, 48, 0x125C45, 0x0E5039); grid.position.y = -0.4; scene.add(grid);
+
+    const edgeMat = new THREE.LineBasicMaterial({color:0x021D14, transparent:true, opacity:0.7});
+    Object.entries(GEO.states).forEach(([uf, st])=>{
+      const shapes = []; let big = null;
+      st.d.split("Z").filter(Boolean).forEach(sub=>{
+        const pts = sub.replace("M","").split("L").map(p=>p.split(",").map(Number));
+        if(pts.length < 3) return;
+        shapes.push(new THREE.Shape(pts.map(([x,y])=>new THREE.Vector2(x-CX, -(y-CZ)))));
+        if(!big || pts.length > big.length) big = pts;
+      });
+      const geo = new THREE.ExtrudeGeometry(shapes, {depth:1, bevelEnabled:false});
+      geo.rotateX(-Math.PI/2);
+      const mat = new THREE.MeshStandardMaterial({color:0x0A3F2E, roughness:0.75, metalness:0.05, emissive:0x000000});
+      const mesh = new THREE.Mesh(geo, mat); mesh.userData.uf = uf;
+      mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), edgeMat));
+      scene.add(mesh); stateList.push(mesh);
+      let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9; big.forEach(([x,y])=>{x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);});
+      const label = makeLabel(uf); scene.add(label);
+      states[uf] = {mesh, mat, label, cx:(x0+x1)/2-CX, cz:(y0+y1)/2-CZ, size:Math.max(x1-x0,y1-y0),
+        h:BASE, th:BASE, col:new THREE.Color(0x0A3F2E), tcol:new THREE.Color(0x0A3F2E)};
+    });
+
+    // todas as cidades localizadas (independente de filtro): uma instância de disco cada
+    const seen = new Map();
+    RECORDS.forEach(r=>{ if(r.found && !seen.has(r.key)) seen.set(r.key, r); });
+    cityKeys = [...seen.keys()];
+    cityKeys.forEach((k,i)=>{ const r = seen.get(k); const [x,y] = project(r.lon, r.lat);
+      cityIdx.set(k, i); cityAnim.push({x:x-CX, z:y-CZ, uf:r.uf, r:0.01, tr:0.01, lift:1, tlift:1, col:new THREE.Color(OTHER_COLOR), tcol:new THREE.Color(OTHER_COLOR)}); });
+    const dGeo = new THREE.CylinderGeometry(1, 1, 1, 28); dGeo.translate(0, 0.5, 0);
+    // cor chapada (sem sombreamento) para o disco manter exatamente a cor da transportadora
+    const dMat = new THREE.MeshBasicMaterial({transparent:true, opacity:0.95});
+    discs = new THREE.InstancedMesh(dGeo, dMat, Math.max(1, cityKeys.length));
+    discs.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    scene.add(discs);
+
+    const h = HOME(); camera.position.set(...h.pos); controls.target.set(...h.target);
+    bindEvents();
+    new ResizeObserver(resize).observe(host);
+    resize();
+  }
+
+  function makeLabel(text){
+    const c = document.createElement("canvas"); c.width = 128; c.height = 64;
+    const g = c.getContext("2d"); g.font = "800 34px Poppins, Inter, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
+    g.lineWidth = 6; g.strokeStyle = "rgba(2,29,20,0.85)"; g.strokeText(text, 64, 34);
+    g.fillStyle = "rgba(255,255,255,0.88)"; g.fillText(text, 64, 34);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c), transparent:true}));
+    sp.scale.set(28, 14, 1); return sp;
+  }
+
+  function resize(){
+    if(!ready) return;
+    const w = host.clientWidth, h = host.clientHeight;
+    if(!w || !h) return;
+    renderer.setSize(w, h, false); renderer.domElement.style.width = w+"px"; renderer.domElement.style.height = h+"px";
+    camera.aspect = w/h; camera.updateProjectionMatrix();
+  }
+
+  function update(agg){
+    pendingAgg = agg;
+    if(!ready || !visible) return;
+    const maxUf = Math.max(1, ...[...agg.ufs.values()].map(v=>v.clientes));
+    Object.entries(states).forEach(([uf, s])=>{
+      const u = agg.ufs.get(uf), n = u ? u.clientes : 0;
+      s.th = n ? BASE + SMAX*Math.sqrt(n/maxUf) : BASE;
+      s.tcol.set(n ? lerpColor(RAMP_LO, RAMP_HI, Math.sqrt(n/maxUf)) : "#"+EMPTY_FILL);
+      s.mat.emissive.setHex(filters.uf===uf ? 0x221F00 : 0x000000);
+    });
+    const cities = [...agg.cities.values()].filter(c=>c.found);
+    const maxN = Math.max(1, ...cities.map(c=>c.clientes));
+    cityAnim.forEach(a=>{ a.tr = 0.01; a.tlift = 0.001; });
+    cities.forEach(c=>{
+      const i = cityIdx.get(c.key); if(i===undefined) return;
+      const a = cityAnim[i], f = Math.sqrt(c.clientes/maxN);
+      a.tr = 2.2 + 11*f;
+      a.tlift = 1.2 + (1-f)*2.2;           // discos menores ficam um pouco acima, para não sumirem sob os maiores
+      a.tcol.set(COLOR.get(mainT(c.byT)) || OTHER_COLOR);
+    });
+    animating = 1;
+  }
+
+  function step(){
+    const k = 0.14; let moving = false;
+    Object.values(states).forEach(s=>{
+      s.h += (s.th - s.h)*k; s.col.lerp(s.tcol, k);
+      if(Math.abs(s.th - s.h) > 0.05) moving = true;
+      s.mesh.scale.y = s.h; s.mat.color.copy(s.col);
+      s.label.position.set(s.cx, s.h + 8, s.cz);
+    });
+    cityAnim.forEach((a,i)=>{
+      a.r += (a.tr - a.r)*k; a.lift += (a.tlift - a.lift)*k; a.col.lerp(a.tcol, k);
+      if(Math.abs(a.tr - a.r) > 0.02) moving = true;
+      const base = states[a.uf] ? states[a.uf].h : BASE;
+      dummy.position.set(a.x, base + 0.05, a.z);
+      dummy.scale.set(a.r, Math.max(0.001, a.lift), a.r);
+      dummy.updateMatrix(); discs.setMatrixAt(i, dummy.matrix); discs.setColorAt(i, a.col);
+    });
+    discs.instanceMatrix.needsUpdate = true; if(discs.instanceColor) discs.instanceColor.needsUpdate = true;
+    animating = moving ? 1 : 0;
+  }
+
+  function ease(t){ return t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+  function flyTo(pos, target, ms=1000){
+    fly = {p0:camera.position.clone(), t0:controls.target.clone(), p1:new THREE.Vector3(...pos), t1:new THREE.Vector3(...target), start:performance.now(), ms};
+  }
+  function loop(now){
+    if(!visible){ running = false; return; }
+    if(fly){ const t = Math.min(1, (now-fly.start)/fly.ms), e = ease(t);
+      camera.position.lerpVectors(fly.p0, fly.p1, e); controls.target.lerpVectors(fly.t0, fly.t1, e); if(t>=1) fly = null; }
+    if(animating) step();
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(loop);
+  }
+  function dolly(f){
+    const v = camera.position.clone().sub(controls.target);
+    const len = Math.min(controls.maxDistance, Math.max(controls.minDistance, v.length()*f));
+    camera.position.copy(controls.target).add(v.setLength(len));
+  }
+
+  function bindEvents(){
+    const cv = renderer.domElement, ray = new THREE.Raycaster(), m = new THREE.Vector2();
+    let down = null;
+    const pick = ev=>{
+      const r = cv.getBoundingClientRect();
+      m.set(((ev.clientX-r.left)/r.width)*2-1, -((ev.clientY-r.top)/r.height)*2+1);
+      ray.setFromCamera(m, camera);
+      const hc = ray.intersectObject(discs);
+      for(const h of hc){ if(cityAnim[h.instanceId].tr > 0.05) return {city:cityKeys[h.instanceId]}; }
+      const hs = ray.intersectObjects(stateList, false);
+      return hs.length ? {uf:hs[0].object.userData.uf} : null;
+    };
+    cv.addEventListener("pointermove", ev=>{
+      if(ev.buttons){ hideTip(); return; }
+      const h = pick(ev);
+      if(h && h.city && lastAgg && lastAgg.cities.get(h.city)){ cv.style.cursor = "pointer"; showTip(ev, cityTipHtml(lastAgg.cities.get(h.city))); }
+      else if(h && h.uf){ cv.style.cursor = "pointer"; showTip(ev, ufTipHtml(h.uf)); }
+      else { cv.style.cursor = "grab"; hideTip(); }
+    });
+    cv.addEventListener("pointerleave", hideTip);
+    cv.addEventListener("pointerdown", ev=>{ down = [ev.clientX, ev.clientY]; });
+    cv.addEventListener("pointerup", ev=>{
+      if(!down || Math.hypot(ev.clientX-down[0], ev.clientY-down[1]) > 5) return;
+      const h = pick(ev); if(!h) return;
+      if(h.city && lastAgg && lastAgg.cities.get(h.city)){ openDrawer(lastAgg.cities.get(h.city)); return; }
+      const uf = h.uf, selecting = filters.uf !== uf;
+      setFilter("uf", selecting ? uf : "");
+      stopRotate();
+      if(selecting){ const s = states[uf], d = Math.max(240, s.size*2.3);
+        flyTo([s.cx - d*0.3, d*0.8, s.cz + d*0.7], [s.cx, s.th, s.cz]); }
+      else { const hm = HOME(); flyTo(hm.pos, hm.target); }
+    });
+    cv.addEventListener("wheel", ev=>{
+      if(!(ev.ctrlKey || ev.metaKey)) return;              // sem Ctrl a página rola normalmente
+      ev.preventDefault(); dolly(ev.deltaY > 0 ? 1.12 : 0.89);
+    }, {passive:false});
+    document.getElementById("m3Rotate").addEventListener("click", ()=>{ api.userRotate = !controls.autoRotate; setAutoRotate(api.userRotate); });
+    document.getElementById("m3Top").addEventListener("click", ()=>{ stopRotate(); const t = TOP(); flyTo(t.pos, t.target); });
+    document.getElementById("m3Home").addEventListener("click", ()=>{ const hm = HOME(); flyTo(hm.pos, hm.target); });
+    document.getElementById("m3In").addEventListener("click", ()=>dolly(0.8));
+    document.getElementById("m3Out").addEventListener("click", ()=>dolly(1.25));
+  }
+  function stopRotate(){ api.userRotate = false; setAutoRotate(false); }
+  function setAutoRotate(on){
+    if(!ready) return;
+    controls.autoRotate = !!on;
+    document.getElementById("m3Rotate").classList.toggle("on", !!on);
+  }
+
+  function setView(v){
+    if(v==="3d" && !ok) v = "2d";
+    visible = v==="3d";
+    try{ localStorage.setItem("mapaTransp.view", v); }catch(_){}
+    document.getElementById("mv3d").classList.toggle("on", visible);
+    document.getElementById("mv2d").classList.toggle("on", !visible);
+    host.hidden = !visible;
+    wrap().classList.toggle("is3d", visible);
+    if(visible){
+      init();
+      if(!ready){ return setView("2d"); }
+      resize();
+      if(pendingAgg) update(pendingAgg);
+      if(!running){ running = true; requestAnimationFrame(loop); }
+    }
+    hideTip();
+  }
+  document.getElementById("mv3d").addEventListener("click", ()=>setView("3d"));
+  document.getElementById("mv2d").addEventListener("click", ()=>setView("2d"));
+  if(!ok) document.getElementById("mv3d").disabled = true;
+
+  api.update = update; api.setView = setView; api.setAutoRotate = setAutoRotate;
+  api.start = ()=>setView(pref);
+  return api;
+})();
 function lerpColor(a,b,t){
   const pa = a.match(/\w\w/g).map(h=>parseInt(h,16)), pb = b.match(/\w\w/g).map(h=>parseInt(h,16));
   return "rgb("+pa.map((v,i)=>Math.round(v+(pb[i]-v)*t)).join(",")+")";
@@ -907,6 +1184,7 @@ function renderMap(agg){
   }).join("");
   LEGEND_STATE = {maxUf, maxN};
   renderMapLegend();
+  Map3D.update(agg);
 }
 
 let LEGEND_STATE = null;
@@ -947,19 +1225,26 @@ document.addEventListener("mousemove", e=>{
   if(t.classList && t.classList.contains("city") && lastAgg){
     const c = lastAgg.cities.get(t.dataset.key);
     if(!c) return hideTip();
-    return showTip(e, `<div class="tooltip-title">${esc(c.cidade)} / ${c.uf} · ${fmt(c.clientes)} cliente${c.clientes>1?"s":""}</div>` + tRows(c.byT, c.clientes, 8) + clientsTip(c));
+    return showTip(e, cityTipHtml(c));
   }
   if(t.classList && t.classList.contains("uf") && lastAgg){
-    const uf = t.dataset.uf, u = lastAgg.ufs.get(uf);
-    return showTip(e, `<div class="tooltip-title">${esc(UF_NOME[uf])} (${uf}) · ${UF_REGIAO[uf]}</div>` +
-      (u ? `<div class="tooltip-row"><span class="k">Clientes</span><span class="v">${fmt(u.clientes)}</span></div>
-            <div class="tooltip-row"><span class="k">Cidades</span><span class="v">${fmt(u.cities.size)}</span></div>` + tRows(u.byT, u.clientes, 6)
-         : `<div class="more">Sem clientes</div>`));
+    return showTip(e, ufTipHtml(t.dataset.uf));
   }
+  if(t.closest && t.closest("#map3d")) return;   // o 3D cuida do próprio tooltip
   const tipEl = t.closest && t.closest("[data-tip]");
   if(tipEl) return showTip(e, tipEl.dataset.tip);
   hideTip();
 });
+function cityTipHtml(c){
+  return `<div class="tooltip-title">${esc(c.cidade)} / ${c.uf} · ${fmt(c.clientes)} cliente${c.clientes>1?"s":""}</div>` + tRows(c.byT, c.clientes, 8) + clientsTip(c);
+}
+function ufTipHtml(uf){
+  const u = lastAgg && lastAgg.ufs.get(uf);
+  return `<div class="tooltip-title">${esc(UF_NOME[uf])} (${uf}) · ${UF_REGIAO[uf]}</div>` +
+    (u ? `<div class="tooltip-row"><span class="k">Clientes</span><span class="v">${fmt(u.clientes)}</span></div>
+          <div class="tooltip-row"><span class="k">Cidades</span><span class="v">${fmt(u.cities.size)}</span></div>` + tRows(u.byT, u.clientes, 6)
+       : `<div class="more">Sem clientes</div>`);
+}
 function sortClients(cl){ return cl.slice().sort((a,b)=>String(a[1]).localeCompare(String(b[1]),"pt-BR")); }
 function clientsTip(c){
   if(!c.cl.length) return "";
@@ -1141,6 +1426,7 @@ document.getElementById("modeToggle").addEventListener("click", e=>{
   const b = e.target.closest("button[data-mode]"); if(!b) return;
   document.querySelectorAll("#modeToggle button").forEach(x=>x.classList.toggle("active", x===b));
   document.body.classList.toggle("mode-tv", b.dataset.mode==="tv");
+  Map3D.setAutoRotate(b.dataset.mode==="tv" ? true : Map3D.userRotate);
   document.body.classList.toggle("mode-individual", b.dataset.mode!=="tv");
 });
 
