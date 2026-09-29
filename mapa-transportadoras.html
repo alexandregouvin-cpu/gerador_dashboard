@@ -117,6 +117,7 @@
   .filters input, .filters select{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg-1);color:var(--text-primary);font-family:'Inter',sans-serif;max-width:100%;}
   .filters input::placeholder{color:var(--text-secondary);}
   .filters input[type=text]{flex:1;min-width:180px;}
+  .filters select{max-width:300px;}
   .filters .btn{padding:8px 14px;font-size:12.5px;}
 
   .map-row{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:16px;margin-bottom:20px;}
@@ -205,7 +206,7 @@
   footer{padding:12px 32px;text-align:center;font-size:11px;color:var(--text-secondary);opacity:.7;}
   .hide{display:none !important;}
 
-  body.mode-tv #setupArea, body.mode-tv .generate-bar, body.mode-tv .tables-row, body.mode-tv #notFoundPanel{display:none !important;}
+  body.mode-tv #setupArea, body.mode-tv .generate-bar, body.mode-tv .tables-row, body.mode-tv #notFoundPanel, body.mode-tv #corrPanel{display:none !important;}
   body.embedded #setupArea{display:none !important;}
 
   @media (max-width: 1000px){
@@ -222,6 +223,33 @@
     #uploadBox > div:first-child{flex-direction:column;}
     #uploadBox > div:first-child > div{min-width:0 !important;}
   }
+
+  /* v2 — clientes por transportadora */
+  .rules{display:none;margin-top:14px;padding:12px 14px;border-radius:10px;background:rgba(0,0,0,0.15);border:1px solid var(--border);}
+  .rules.show{display:block;}
+  .rules .rules-title{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent-mint);font-weight:800;margin-bottom:8px;}
+  .rules label{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin:6px 0;cursor:pointer;}
+  .rules input{accent-color:var(--accent-mint);margin-top:2px;}
+  .rules small{color:var(--text-secondary);}
+  .dotc{display:inline-block;width:10px;height:10px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--bg-0);vertical-align:middle;}
+  .t-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:4px;}
+  .t-legend .it{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);max-width:260px;cursor:pointer;}
+  .t-legend .it span.nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .t-legend .it:hover span.nm{color:#fff;}
+  .t-legend .it.off{opacity:.35;}
+  .stack{display:flex;gap:2px;height:14px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,0.06);}
+  .stack i{display:block;height:100%;min-width:2px;}
+  .stack i:last-child{border-radius:0 4px 4px 0;}
+  .stack.thin{height:6px;margin-top:5px;}
+  .rank-head,.rank-item{grid-template-columns:40px minmax(0,1fr) 72px 60px;}
+  .rank-item .nm-wrap{min-width:0;}
+  .bar-row{grid-template-columns:110px minmax(0,1fr) 120px;}
+  .transp-cell{display:flex;align-items:center;gap:8px;min-width:0;}
+  .transp-cell a{color:#fff;text-decoration:none;border-bottom:1px dotted var(--text-secondary);overflow:hidden;text-overflow:ellipsis;}
+  @media (max-width: 640px){
+    .bar-row{grid-template-columns:84px minmax(0,1fr) 96px;}
+    .rank-head,.rank-item{grid-template-columns:34px minmax(0,1fr) 62px 44px;}
+  }
 </style>
 </head>
 <body class="mode-individual">
@@ -229,8 +257,8 @@
   <div class="brand">
     <img src="data:image/png;base64,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" alt="Apis Flora">
     <div class="titles">
-      <h1>Transportadoras — Cobertura por Cidade e Região</h1>
-      <p>Distribuição da malha logística no Brasil</p>
+      <h1>Transportadoras — Distribuição de Clientes por Cidade e Região</h1>
+      <p>Clientes ativos · Lista de Parceiros de Negócios</p>
     </div>
   </div>
   <div class="mode-toggle" id="modeToggle">
@@ -243,8 +271,8 @@
     <div class="step" id="uploadBox">
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:stretch;">
         <div style="flex:1;min-width:260px;">
-          <h2><span class="num">1</span> Planilha de transportadoras</h2>
-          <p class="hint">Uma linha por transportadora × cidade atendida. Precisa ter as colunas <b>Transportadora</b>, <b>Cidade</b> e <b>UF</b> (ou a cidade no formato "Cidade - UF"). Aceita .xlsx, .xls ou .csv.</p>
+          <h2><span class="num">1</span> Planilha de clientes / parceiros</h2>
+          <p class="hint">Uma linha por cliente, com as colunas de <b>Transportadora</b>, <b>Cidade</b> e <b>UF</b> (ou a cidade no formato "Cidade - UF"). A <b>Lista de Parceiros de Negócios</b> é reconhecida automaticamente. Aceita .xlsx, .xls ou .csv.</p>
         </div>
         <label class="upload-slot" id="uploadSlot" style="flex:1;min-width:260px;cursor:pointer;">
           <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
@@ -258,6 +286,12 @@
         <div><label for="mapCidade">Coluna Cidade</label><select id="mapCidade"></select></div>
         <div><label for="mapUf">Coluna UF</label><select id="mapUf"></select></div>
         <div><button class="btn" id="btnProcess">Gerar mapa</button></div>
+      </div>
+      <div class="rules" id="rulesBox">
+        <div class="rules-title">Filtros fixos aplicados na planilha</div>
+        <label id="ruleAtivoWrap"><input type="checkbox" id="ruleAtivo" checked> <span>Somente ativos <small>(coluna "Ativo" = Y)</small></span></label>
+        <label id="ruleClienteWrap"><input type="checkbox" id="ruleCliente" checked> <span>Somente clientes <small>("Código do PN" começando com C)</small></span></label>
+        <label id="ruleHiddenWrap"><input type="checkbox" id="ruleHidden" checked> <span>Respeitar o filtro deixado na planilha <small id="ruleHiddenInfo"></small></span></label>
       </div>
     </div>
     <div class="status-bar" id="statusBar"></div>
@@ -278,21 +312,22 @@
 
     <div class="map-row">
       <div class="chart-panel">
-        <h3>Mapa de cobertura</h3>
-        <p class="sub">Cada círculo é uma cidade atendida (tamanho = nº de transportadoras). Estados mais claros têm mais cidades atendidas. Clique num estado para filtrar.</p>
-        <div class="map-wrap"><svg id="mapSvg" role="img" aria-label="Mapa do Brasil com cidades atendidas por transportadoras"></svg></div>
+        <h3>Mapa de clientes por transportadora</h3>
+        <p class="sub">Cada círculo é uma cidade com clientes ativos. O tamanho indica o nº de clientes e a cor, a transportadora que atende a maioria deles. Estados mais claros têm mais clientes. Clique num estado para filtrar.</p>
+        <div class="t-legend" id="tLegend"></div>
+        <div class="map-wrap"><svg id="mapSvg" role="img" aria-label="Mapa do Brasil com clientes por cidade e transportadora"></svg></div>
         <div class="map-legend" id="mapLegend"></div>
       </div>
       <div class="side-col">
         <div class="chart-panel">
           <h3>Por região</h3>
-          <p class="sub">Cidades atendidas · transportadoras presentes</p>
+          <p class="sub">Clientes por transportadora · clique para filtrar</p>
           <div class="bars" id="regionBars"></div>
         </div>
         <div class="chart-panel rank-panel">
           <h3>Por estado</h3>
           <div class="rank-scroll">
-            <div class="rank-head"><div>UF</div><div>Estado</div><div class="n">Cidades</div><div class="n">Transp.</div></div>
+            <div class="rank-head"><div>UF</div><div>Estado</div><div class="n">Clientes</div><div class="n">Transp.</div></div>
             <div id="ufRank"></div>
           </div>
         </div>
@@ -304,16 +339,16 @@
         <div class="panel-header"><h2>Transportadoras</h2><span class="count" id="countTransp"></span></div>
         <div class="table-scroll">
           <table id="tblTransp">
-            <thead><tr><th data-key="nome">Transportadora</th><th data-key="cidades" class="num">Cidades</th><th data-key="ufs" class="num">UFs</th><th data-key="regioes">Regiões</th></tr></thead>
+            <thead><tr><th data-key="nome">Transportadora</th><th data-key="clientes" class="num">Clientes</th><th data-key="pct" class="num">%</th><th data-key="cidades" class="num">Cidades</th><th data-key="ufs" class="num">UFs</th><th data-key="regioes">Regiões</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
       </div>
       <div class="panel">
-        <div class="panel-header"><h2>Cidades atendidas</h2><span class="count" id="countCid"></span></div>
+        <div class="panel-header"><h2>Cidades</h2><span class="count" id="countCid"></span></div>
         <div class="table-scroll">
           <table id="tblCid">
-            <thead><tr><th data-key="cidade">Cidade</th><th data-key="uf">UF</th><th data-key="regiao">Região</th><th data-key="n" class="num">Transp.</th><th data-key="lista">Transportadoras</th></tr></thead>
+            <thead><tr><th data-key="cidade">Cidade</th><th data-key="uf">UF</th><th data-key="clientes" class="num">Clientes</th><th data-key="nt" class="num">Transp.</th><th data-key="lista">Transportadoras (clientes)</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
@@ -322,14 +357,21 @@
 
     <div class="panel hide" id="notFoundPanel">
       <div class="panel-header"><h2>⚠️ Cidades não localizadas no mapa</h2><span class="count" id="countNF"></span></div>
-      <p style="margin:12px 18px 0;font-size:12.5px;color:var(--text-secondary);">Estas linhas não bateram com a base de municípios do IBGE (nome escrito diferente ou UF faltando). Elas aparecem nas contagens de transportadoras, mas não no mapa.</p>
+      <p style="margin:12px 18px 0;font-size:12.5px;color:var(--text-secondary);">Estas cidades não bateram com a base de municípios do IBGE (nome escrito diferente, UF inválida ou endereço no exterior). Os clientes entram nas contagens, mas não aparecem no mapa.</p>
       <div class="table-scroll" style="max-height:260px;">
-        <table><thead><tr><th>Cidade (planilha)</th><th>UF</th><th>Transportadora</th></tr></thead><tbody id="nfBody"></tbody></table>
+        <table><thead><tr><th>Cidade (planilha)</th><th>UF</th><th>Transportadora</th><th class="num">Clientes</th></tr></thead><tbody id="nfBody"></tbody></table>
+      </div>
+    </div>
+    <div class="panel hide" id="corrPanel">
+      <div class="panel-header"><h2>✏️ Nomes de cidade corrigidos automaticamente</h2><span class="count" id="countCorr"></span></div>
+      <p style="margin:12px 18px 0;font-size:12.5px;color:var(--text-secondary);">Cidades com erro de digitação na planilha, associadas ao município mais parecido da mesma UF. Vale conferir e corrigir o cadastro.</p>
+      <div class="table-scroll" style="max-height:260px;">
+        <table><thead><tr><th>Como está na planilha</th><th>UF</th><th>Considerado como</th><th class="num">Clientes</th></tr></thead><tbody id="corrBody"></tbody></table>
       </div>
     </div>
 
     <div class="generate-bar" id="generateBar">
-      <p>Baixe este dashboard como um arquivo HTML único, com os dados já embutidos, para abrir em qualquer navegador ou deixar na TV sem precisar carregar a planilha de novo.</p>
+      <p>Baixe este dashboard como um arquivo HTML único, com os dados já embutidos (só cidade, UF, transportadora e quantidade de clientes), para abrir em qualquer navegador ou deixar na TV.</p>
       <button class="btn big" id="btnDownload">⬇ Baixar dashboard</button>
     </div>
   </div>
@@ -356,6 +398,12 @@ Object.entries(GEO.states).forEach(([s,o])=>UF_NOME[s]=o.n);
 const UF_BY_NAME = {};
 Object.entries(UF_NOME).forEach(([s,n])=>UF_BY_NAME[normalize(n)]=s);
 
+/* Paleta categórica (validada para daltonismo em todos os pares sobre o fundo do mapa).
+   As 5 transportadoras com mais clientes recebem cor fixa; as demais ficam em "Outras". */
+const PALETTE = ["#FAEB0A","#3F9BFF","#FF5A36","#D6B8FF","#20D4A0"];
+const OTHER_COLOR = "#9FB5AB";
+const RAMP_LO = "185C45", RAMP_HI = "3FA07D", EMPTY_FILL = "0A3F2E";
+
 function normalize(str){
   if(str===null||str===undefined) return "";
   return str.toString().normalize("NFD").replace(/[̀-ͯ]/g,"")
@@ -363,10 +411,17 @@ function normalize(str){
 }
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function fmt(n){return n.toLocaleString("pt-BR");}
+function pct(a,b){return b ? (a/b*100).toLocaleString("pt-BR",{maximumFractionDigits:a/b<0.1?1:0})+"%" : "—";}
+function cleanName(s){
+  let n = String(s??"").replace(/\s+/g," ").trim();
+  let prev;
+  do{ prev = n; n = n.replace(/[\s,.-]+(LTDA\.?|S\/A|S\.A\.?|SA|EIRELI|ME|EPP)$/i,"").trim(); }while(n!==prev);
+  return n;
+}
 
 /* ---------- Base de municípios ---------- */
-const MUN = new Map();        // "NOME|UF" -> {nome,uf,lat,lon}
-const MUN_BY_NAME = new Map(); // "NOME" -> [mun...]
+const MUN = new Map();
+const MUN_BY_NAME = new Map();
 GEO.mun.split(";").forEach(s=>{
   const [nome,uf,lat,lon] = s.split("|");
   const m = {nome,uf,lat:+lat,lon:+lon};
@@ -385,26 +440,67 @@ function parseUf(v){
   if(UF_NOME[n]) return n;
   return UF_BY_NAME[n] || "";
 }
+function cityKey(s){
+  // normaliza e expande abreviações comuns (STA, STO, N SRA) e "D OESTE" -> "DOESTE"
+  return normalize(s).replace(/\bSTA\b/g,"SANTA").replace(/\bSTO\b/g,"SANTO")
+    .replace(/\bN S(RA)?\b/g,"NOSSA SENHORA").replace(/\bD (?=[AEIOU])/g,"D");
+}
+function lev(a,b,max){
+  if(Math.abs(a.length-b.length)>max) return max+1;
+  let prev = Array.from({length:b.length+1},(_,i)=>i);
+  for(let i=1;i<=a.length;i++){
+    const cur=[i]; let rowMin=i;
+    for(let j=1;j<=b.length;j++){
+      cur[j]=Math.min(prev[j]+1, cur[j-1]+1, prev[j-1]+(a[i-1]===b[j-1]?0:1));
+      if(cur[j]<rowMin) rowMin=cur[j];
+    }
+    if(rowMin>max) return max+1;
+    prev=cur;
+  }
+  return prev[b.length];
+}
+const MUN_BY_UF = new Map();
+MUN.forEach((m,k)=>{ const [nk,uf]=k.split("|"); if(!MUN_BY_UF.has(uf)) MUN_BY_UF.set(uf,[]); MUN_BY_UF.get(uf).push([cityKey(m.nome),m]); });
+const RESOLVE_CACHE = new Map();
 function resolveCity(cidadeRaw, ufRaw){
+  const ck = String(cidadeRaw??"")+"\u0001"+String(ufRaw??"");
+  if(RESOLVE_CACHE.has(ck)) return RESOLVE_CACHE.get(ck);
+  const r = resolveCityImpl(cidadeRaw, ufRaw);
+  RESOLVE_CACHE.set(ck, r);
+  return r;
+}
+function resolveCityImpl(cidadeRaw, ufRaw){
   let cidade = String(cidadeRaw??"").trim();
   let uf = parseUf(ufRaw);
-  if(!uf){
-    const m = cidade.match(/^(.*?)\s*[-\/(,]\s*([A-Za-z]{2})\s*\)?\s*$/);
-    if(m && UF_NOME[m[2].toUpperCase()]){ cidade = m[1].trim(); uf = m[2].toUpperCase(); }
+  // "Cidade - UF", "Cidade/UF", "Cidade (UF)"
+  const m = cidade.match(/^(.*?)\s*[-\/(,]\s*([A-Za-z]{2})\s*\)?\s*$/);
+  if(m && UF_NOME[m[2].toUpperCase()] && (!uf || uf===m[2].toUpperCase())){ cidade = m[1].trim(); uf = m[2].toUpperCase(); }
+  const k = cityKey(cidade);
+  const ok = (mun, fuzzy)=>({cidade:mun.nome, uf:mun.uf, lat:mun.lat, lon:mun.lon, found:true, fuzzy:!!fuzzy});
+  if(!k) return {cidade:"(sem cidade)", uf, found:false};
+  if(uf){
+    const list = MUN_BY_UF.get(uf) || [];
+    const exact = list.find(([nk])=>nk===k);
+    if(exact) return ok(exact[1]);
+    // erro de digitação: aceita o município mais parecido da mesma UF se for único e bem próximo
+    if(k.length>=5){
+      const max = k.length>=15 ? 3 : k.length>=9 ? 2 : 1;
+      let best=null, bestD=max+1, tie=false;
+      list.forEach(([nk,mun])=>{ const d=lev(k,nk,max); if(d<bestD){best=mun;bestD=d;tie=false;} else if(d===bestD) tie=true; });
+      if(best && bestD<=max && !tie) return ok(best, true);
+    }
+  } else {
+    // UF vazia/inválida (ex.: "1", "EX"): usa o nome se for único no Brasil
+    const c = MUN_BY_NAME.get(normalize(cidade));
+    if(c && c.length===1) return ok(c[0]);
   }
-  const k = normalize(cidade);
-  let mun = uf ? MUN.get(k+"|"+uf) : null;
-  if(!mun && !uf){
-    const c = MUN_BY_NAME.get(k);
-    if(c && c.length===1){ mun = c[0]; }
-  }
-  if(mun) return {cidade:mun.nome, uf:mun.uf, lat:mun.lat, lon:mun.lon, found:true};
-  return {cidade: cidade || "(vazio)", uf, found:false};
+  return {cidade, uf, found:false};
 }
 
 /* ---------- Estado ---------- */
-let RECORDS = [];   // {t, cidade, uf, regiao, key, lat, lon, found, raw:{t,c,u}}
-let GENERATED_AT = null;
+let RECORDS = [];   // {t, tk, cidade, uf, regiao, key, lat, lon, found, n, raw:{c,u}}
+let GENERATED_AT = null, NOTE = "";
+let COLOR = new Map(), TOTAL_BY_T = new Map();
 const filters = {search:"", transp:"", regiao:"", uf:""};
 const els = {
   status: document.getElementById("statusBar"),
@@ -418,25 +514,35 @@ function setStatus(msg, kind){
   els.status.innerHTML = msg || "";
 }
 
+/* rawRows: [{t, c, u, n}] — uma linha por cliente (n=1) ou já agregada (n=qtd). */
+let CORRECTIONS = [];
 function buildRecords(rawRows){
-  const seen = new Set();
-  const out = [];
+  const byKey = new Map(), nameByTk = new Map(), corr = new Map();
   rawRows.forEach(r=>{
-    const t = String(r.t??"").trim();
-    if(!t && !String(r.c??"").trim()) return;
+    const t = cleanName(r.t) || "(sem transportadora)";
+    const tk = normalize(t);
+    if(!nameByTk.has(tk)) nameByTk.set(tk, t);
     const res = resolveCity(r.c, r.u);
-    const key = res.found ? res.cidade+"|"+res.uf : "NF:"+normalize(r.c)+"|"+res.uf;
-    const dedup = normalize(t)+"#"+key;
-    if(seen.has(dedup)) return;
-    seen.add(dedup);
-    out.push({t: t || "(sem nome)", cidade:res.cidade, uf:res.uf, regiao:UF_REGIAO[res.uf]||"", key,
-      lat:res.lat, lon:res.lon, found:res.found, raw:{t:r.t,c:r.c,u:r.u}});
+    const key = res.found ? res.cidade+"|"+res.uf : "NF:"+normalize(r.c)+"|"+(res.uf||normalize(r.u));
+    if(res.fuzzy){
+      const ck = normalize(r.c)+"|"+normalize(r.u)+"|"+key;
+      if(!corr.has(ck)) corr.set(ck,{c:r.c, u:r.u, to:res.cidade+" / "+res.uf, n:0});
+      corr.get(ck).n += (+r.n||1);
+    }
+    const k = tk+"#"+key;
+    const n = +r.n || 1;
+    if(byKey.has(k)){ byKey.get(k).n += n; return; }
+    byKey.set(k, {tk, cidade:res.cidade, uf:res.uf, regiao:UF_REGIAO[res.uf]||"", key,
+      lat:res.lat, lon:res.lon, found:res.found, fuzzy:res.fuzzy, n, raw:{c:r.c, u:r.u}});
   });
+  const out = [...byKey.values()];
+  out.forEach(r=>r.t = nameByTk.get(r.tk));
+  CORRECTIONS = [...corr.values()].sort((a,b)=>b.n-a.n);
   return out;
 }
 
 /* ---------- Upload ---------- */
-let workbook = null;
+let workbook = null, sheetInfo = null;
 const fileInput = document.getElementById("fileInput");
 fileInput.addEventListener("change", e=>{
   const f = e.target.files[0];
@@ -444,6 +550,7 @@ fileInput.addEventListener("change", e=>{
   document.getElementById("fileName").textContent = f.name;
   document.getElementById("uploadSlot").classList.add("has-file");
   if(typeof XLSX === "undefined"){ setStatus("Não foi possível carregar o leitor de planilhas (sem internet?). Tente novamente.", "error"); return; }
+  setStatus("Lendo planilha...");
   const reader = new FileReader();
   reader.onload = ev=>{
     try{
@@ -453,69 +560,119 @@ fileInput.addEventListener("change", e=>{
         let text;
         try{ text = new TextDecoder("utf-8",{fatal:true}).decode(bytes); }
         catch(_){ text = new TextDecoder("windows-1252").decode(bytes); }
-        workbook = XLSX.read(text.replace(/^\uFEFF/,""), {type:"string"});
+        workbook = XLSX.read(text.replace(/^﻿/,""), {type:"string"});
       } else {
-        workbook = XLSX.read(bytes, {type:"array"});
+        // cellStyles: necessário para saber quais linhas estão ocultas pelo filtro do Excel
+        workbook = XLSX.read(bytes, {type:"array", cellStyles:true});
       }
       const sel = document.getElementById("mapSheet");
       sel.innerHTML = workbook.SheetNames.map(s=>`<option>${esc(s)}</option>`).join("");
       fillColumnSelects();
       document.getElementById("mappingRow").classList.remove("hide");
-      setStatus("Planilha lida. Confira as colunas e clique em <b>Gerar mapa</b>.");
+      setStatus("Planilha lida. Confira as colunas e os filtros e clique em <b>Gerar mapa</b>.");
     }catch(err){ setStatus("Erro ao ler a planilha: "+esc(err.message), "error"); }
   };
   reader.readAsArrayBuffer(f);
 });
 document.getElementById("mapSheet").addEventListener("change", fillColumnSelects);
 
-function sheetRows(){
-  const name = document.getElementById("mapSheet").value;
-  return XLSX.utils.sheet_to_json(workbook.Sheets[name], {defval:""});
+function readSheet(){
+  const ws = workbook.Sheets[document.getElementById("mapSheet").value];
+  const rows = XLSX.utils.sheet_to_json(ws, {defval:""});
+  const meta = ws["!rows"] || [];
+  rows.forEach(r=>{ r.__hidden = !!(meta[r.__rowNum__] && meta[r.__rowNum__].hidden); });
+  return rows;
+}
+function findCol(cols, tests){
+  for(const t of tests){ const c = cols.find(c=>t(normalize(c))); if(c) return c; }
+  return "";
 }
 function fillColumnSelects(){
-  const rows = sheetRows();
-  const cols = rows.length ? Object.keys(rows[0]) : [];
-  const guess = (tests)=> cols.find(c=>tests.some(t=>t(normalize(c)))) || "";
-  const gT = guess([c=>c.includes("TRANSPORT"), c=>c.includes("RAZAO"), c=>c==="NOME"]);
-  const gC = guess([c=>c.includes("CIDADE"), c=>c.includes("MUNICIPIO"), c=>c.includes("DESTINO"), c=>c.includes("LOCALIDADE")]);
-  const gU = guess([c=>c==="UF", c=>/\bUF\b/.test(c), c=>c.includes("ESTADO")]);
+  const rows = readSheet();
+  const cols = rows.length ? Object.keys(rows[0]).filter(c=>c!=="__hidden") : [];
+  const gT = findCol(cols, [c=>c==="NOME TRANSPORTADORA", c=>c.includes("TRANSPORTADORA") && !c.includes("CODIGO"), c=>c.includes("TRANSPORT")]);
+  const gC = findCol(cols, [c=>c==="ENDERECO DE COBRANCA CIDADE", c=>c.includes("CIDADE"), c=>c.includes("MUNICIPIO"), c=>c.includes("DESTINO")]);
+  const gU = findCol(cols, [c=>c==="UF", c=>c==="ESTADO DO DESTINATARIO", c=>/\bUF\b/.test(c), c=>c.includes("ESTADO")]);
+  sheetInfo = {
+    ativo: findCol(cols, [c=>c==="ATIVO"]),
+    codigo: findCol(cols, [c=>c==="CODIGO DO PN"]),
+    codTransp: findCol(cols, [c=>c.replace(/ /g,"")==="CODIGOTRANSPORTADORA"]),
+    hidden: rows.filter(r=>r.__hidden).length,
+    total: rows.length
+  };
   const opts = (sel, withNone)=> (withNone?`<option value="">(nenhuma — UF junto da cidade)</option>`:"") +
     cols.map(c=>`<option value="${esc(c)}" ${c===sel?"selected":""}>${esc(c)}</option>`).join("");
   document.getElementById("mapTransp").innerHTML = opts(gT,false);
   document.getElementById("mapCidade").innerHTML = opts(gC,false);
   document.getElementById("mapUf").innerHTML = opts(gU,true);
   if(!gU) document.getElementById("mapUf").value = "";
+  document.getElementById("ruleAtivoWrap").classList.toggle("hide", !sheetInfo.ativo);
+  document.getElementById("ruleClienteWrap").classList.toggle("hide", !sheetInfo.codigo);
+  document.getElementById("ruleHiddenWrap").classList.toggle("hide", !sheetInfo.hidden);
+  document.getElementById("ruleHiddenInfo").textContent = `(ignora ${fmt(sheetInfo.hidden)} linhas ocultas pelo filtro do Excel)`;
+  document.getElementById("rulesBox").classList.toggle("show", !!(sheetInfo.ativo || sheetInfo.codigo || sheetInfo.hidden));
 }
 document.getElementById("btnProcess").addEventListener("click", ()=>{
   const cT = document.getElementById("mapTransp").value;
   const cC = document.getElementById("mapCidade").value;
   const cU = document.getElementById("mapUf").value;
   if(!cT || !cC){ setStatus("Escolha as colunas de Transportadora e Cidade.", "error"); return; }
-  const raw = sheetRows().map(r=>({t:r[cT], c:r[cC], u: cU ? r[cU] : ""}));
+  const useAtivo = sheetInfo.ativo && document.getElementById("ruleAtivo").checked;
+  const useCli = sheetInfo.codigo && document.getElementById("ruleCliente").checked;
+  const useHidden = sheetInfo.hidden && document.getElementById("ruleHidden").checked;
+  const all = readSheet();
+  const kept = all.filter(r=>
+    (!useHidden || !r.__hidden) &&
+    (!useAtivo || normalize(r[sheetInfo.ativo])==="Y") &&
+    (!useCli || normalize(r[sheetInfo.codigo]).startsWith("C"))
+  );
+  const raw = kept.map(r=>{
+    let t = String(r[cT]??"").trim();
+    // Nome vazio ou "0" (PROCX sem resultado): usa o código da transportadora
+    if((!t || t==="0" || /^#N/.test(t)) && sheetInfo.codTransp && r[sheetInfo.codTransp]) t = String(r[sheetInfo.codTransp]).trim().toUpperCase()+" (sem nome)";
+    return {t, c:r[cC], u: cU ? r[cU] : "", n:1};
+  }).filter(r=>r.t || String(r.c).trim());
+  if(!raw.length){ setStatus("Nenhuma linha sobrou depois dos filtros.", "error"); return; }
   RECORDS = buildRecords(raw);
-  if(!RECORDS.length){ setStatus("Nenhuma linha válida encontrada.", "error"); return; }
   GENERATED_AT = new Date();
-  const nf = RECORDS.filter(r=>!r.found).length;
-  setStatus(`${fmt(RECORDS.length)} combinações transportadora × cidade carregadas` +
-    (nf ? ` · <b>${fmt(nf)}</b> não localizadas no mapa (veja a lista no fim da página).` : "."), nf ? "warn" : "");
+  NOTE = [useAtivo && "Ativo = Y", useCli && "código do PN começa com C", useHidden && "filtro da planilha"].filter(Boolean).join(" · ");
+  const nfClientes = RECORDS.filter(r=>!r.found).reduce((s,r)=>s+r.n,0);
+  setStatus(`${fmt(raw.length)} clientes considerados de ${fmt(all.length)} linhas da planilha` +
+    (NOTE ? ` (filtros: ${esc(NOTE)})` : "") +
+    (CORRECTIONS.length ? ` · ${fmt(CORRECTIONS.reduce((s,c)=>s+c.n,0))} com nome de cidade corrigido automaticamente` : "") +
+    (nfClientes ? ` · <b>${fmt(nfClientes)}</b> com cidade não localizada no mapa (listas no fim da página).` : "."), nfClientes ? "warn" : "");
   initDashboard();
 });
 
 /* ---------- Dashboard ---------- */
 function initDashboard(){
   els.dash.classList.remove("hide");
-  const transps = [...new Set(RECORDS.map(r=>r.t))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  TOTAL_BY_T = new Map();
+  RECORDS.forEach(r=>TOTAL_BY_T.set(r.t, (TOTAL_BY_T.get(r.t)||0)+r.n));
+  const ranked = [...TOTAL_BY_T.entries()].sort((a,b)=>b[1]-a[1]);
+  COLOR = new Map(ranked.map(([t],i)=>[t, PALETTE[i] || OTHER_COLOR]));
+  const transps = ranked.map(([t])=>t);
   document.getElementById("fTransp").innerHTML = `<option value="">Todas as transportadoras (${transps.length})</option>` +
-    transps.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join("");
+    transps.map(t=>`<option value="${esc(t)}">${esc(t)} (${fmt(TOTAL_BY_T.get(t))})</option>`).join("");
   document.getElementById("fRegiao").innerHTML = `<option value="">Todas as regiões</option>` +
     Object.keys(REGIOES).map(r=>`<option>${r}</option>`).join("");
   document.getElementById("fUf").innerHTML = `<option value="">Todos os estados</option>` +
     Object.keys(UF_NOME).sort().map(u=>`<option value="${u}">${u} — ${esc(UF_NOME[u])}</option>`).join("");
   if(GENERATED_AT) document.getElementById("footerInfo").textContent =
-    `Gerado em ${GENERATED_AT.toLocaleString("pt-BR")} · Apis Flora · Base de municípios: IBGE`;
+    `Gerado em ${GENERATED_AT.toLocaleString("pt-BR")}` + (NOTE ? ` · Filtros: ${NOTE}` : "") + ` · Apis Flora · Base de municípios: IBGE`;
   drawBaseMap();
+  renderCorrections();
   render();
 }
+
+/* Grupos de cor: top 5 individualmente + "Outras" */
+function colorGroups(){
+  const named = [...COLOR.entries()].filter(([,c])=>c!==OTHER_COLOR).map(([t,c])=>({id:t, label:t, color:c}));
+  const hasOther = [...COLOR.values()].some(c=>c===OTHER_COLOR);
+  if(hasOther) named.push({id:"__outras", label:"Outras", color:OTHER_COLOR});
+  return named;
+}
+function groupOf(t){ return COLOR.get(t)===OTHER_COLOR ? "__outras" : t; }
 
 function filtered(){
   const q = normalize(filters.search);
@@ -529,21 +686,31 @@ function filtered(){
 
 function aggregate(rows){
   const cities = new Map(), ufs = new Map(), regs = new Map(), transp = new Map();
+  let clientes = 0;
+  const bump = (m,k,t,n,cityKey)=>{
+    if(!m.has(k)) m.set(k,{clientes:0, cities:new Set(), byT:new Map()});
+    const o = m.get(k); o.clientes += n; o.cities.add(cityKey); o.byT.set(t,(o.byT.get(t)||0)+n);
+  };
   rows.forEach(r=>{
-    if(!cities.has(r.key)) cities.set(r.key,{key:r.key,cidade:r.cidade,uf:r.uf,regiao:r.regiao,lat:r.lat,lon:r.lon,found:r.found,ts:new Set()});
-    cities.get(r.key).ts.add(r.t);
-    if(r.uf){
-      if(!ufs.has(r.uf)) ufs.set(r.uf,{cities:new Set(),ts:new Set()});
-      ufs.get(r.uf).cities.add(r.key); ufs.get(r.uf).ts.add(r.t);
-    }
-    if(r.regiao){
-      if(!regs.has(r.regiao)) regs.set(r.regiao,{cities:new Set(),ts:new Set()});
-      regs.get(r.regiao).cities.add(r.key); regs.get(r.regiao).ts.add(r.t);
-    }
-    if(!transp.has(r.t)) transp.set(r.t,{cities:new Set(),ufs:new Set(),regs:new Set()});
-    const T = transp.get(r.t); T.cities.add(r.key); if(r.uf) T.ufs.add(r.uf); if(r.regiao) T.regs.add(r.regiao);
+    clientes += r.n;
+    if(!cities.has(r.key)) cities.set(r.key,{key:r.key,cidade:r.cidade,uf:r.uf,regiao:r.regiao,lat:r.lat,lon:r.lon,found:r.found,clientes:0,byT:new Map()});
+    const c = cities.get(r.key); c.clientes += r.n; c.byT.set(r.t,(c.byT.get(r.t)||0)+r.n);
+    if(r.uf) bump(ufs, r.uf, r.t, r.n, r.key);
+    if(r.regiao) bump(regs, r.regiao, r.t, r.n, r.key);
+    if(!transp.has(r.t)) transp.set(r.t,{clientes:0,cities:new Set(),ufs:new Set(),regs:new Set()});
+    const T = transp.get(r.t); T.clientes += r.n; T.cities.add(r.key); if(r.uf) T.ufs.add(r.uf); if(r.regiao) T.regs.add(r.regiao);
   });
-  return {cities, ufs, regs, transp};
+  return {clientes, cities, ufs, regs, transp};
+}
+function mainT(byT){ let best=null; byT.forEach((n,t)=>{ if(!best || n>best[1]) best=[t,n]; }); return best ? best[0] : null; }
+function sortedByT(byT){ return [...byT.entries()].sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0],"pt-BR")); }
+function stackHtml(byT, total, max, thin){
+  const g = new Map();
+  byT.forEach((n,t)=>{ const k = groupOf(t); g.set(k,(g.get(k)||0)+n); });
+  const w = max ? total/max*100 : 0;
+  const segs = colorGroups().filter(x=>g.get(x.id)).map(x=>
+    `<i style="flex:${g.get(x.id)};background:${x.color}" data-tip="${esc(`<div class='tooltip-title'>${esc(x.label)}</div><div class='tooltip-row'><span class='k'>Clientes</span><span class='v'>${fmt(g.get(x.id))} (${pct(g.get(x.id),total)})</span></div>`)}"></i>`).join("");
+  return `<div class="stack ${thin?"thin":""}" style="width:${Math.max(w, total?1.5:0)}%">${segs}</div>`;
 }
 
 let mapLayers = null;
@@ -563,7 +730,6 @@ function drawBaseMap(){
     gStates.appendChild(path);
   });
   els.svg.append(gStates, gLabels, gCities);
-  // rótulos no centro de cada estado (bbox)
   gStates.querySelectorAll("path").forEach(path=>{
     const b = path.getBBox();
     const sig = path.dataset.uf;
@@ -576,14 +742,11 @@ function drawBaseMap(){
     gLabels.appendChild(t);
   });
   mapLayers = {gStates, gCities};
-
   gStates.addEventListener("click", e=>{
     const uf = e.target.dataset && e.target.dataset.uf;
     if(!uf) return;
     setFilter("uf", filters.uf===uf ? "" : uf);
   });
-  els.svg.addEventListener("mousemove", onMapHover);
-  els.svg.addEventListener("mouseleave", hideTip);
 }
 
 let lastAgg = null;
@@ -591,87 +754,100 @@ function lerpColor(a,b,t){
   const pa = a.match(/\w\w/g).map(h=>parseInt(h,16)), pb = b.match(/\w\w/g).map(h=>parseInt(h,16));
   return "rgb("+pa.map((v,i)=>Math.round(v+(pb[i]-v)*t)).join(",")+")";
 }
-const RAMP_LO = "125C45", RAMP_HI = "9BF0C3", EMPTY_FILL = "0A3F2E";
 
 function render(){
   const rows = filtered();
   const agg = aggregate(rows);
   lastAgg = agg;
-  renderKpis(rows, agg);
+  renderKpis(agg);
+  renderLegend();
   renderMap(agg);
   renderRegions(agg);
   renderUfRank(agg);
   renderTables(agg);
   renderNotFound(rows);
-  // sincroniza selects
   document.getElementById("fTransp").value = filters.transp;
   document.getElementById("fRegiao").value = filters.regiao;
   document.getElementById("fUf").value = filters.uf;
 }
 
-function renderKpis(rows, agg){
-  const found = [...agg.cities.values()].filter(c=>c.found).length;
-  let topReg = null;
-  agg.regs.forEach((v,k)=>{ if(!topReg || v.cities.size>topReg[1].cities.size) topReg=[k,v]; });
-  const avg = agg.cities.size ? (rows.length/agg.cities.size) : 0;
-  const single = [...agg.cities.values()].filter(c=>c.ts.size===1).length;
+function renderKpis(agg){
+  const top = mainT(new Map([...agg.transp.entries()].map(([t,v])=>[t,v.clientes])));
+  const single = [...agg.cities.values()].filter(c=>c.byT.size===1).length;
+  const singleCli = [...agg.cities.values()].filter(c=>c.byT.size===1).reduce((s,c)=>s+c.clientes,0);
   document.getElementById("kpis").innerHTML = `
-    <div class="kpi"><div class="hex"></div><div class="label">Transportadoras</div>
-      <div class="value">${fmt(agg.transp.size)}</div><div class="kpi-sub">${fmt(rows.length)} rotas transportadora × cidade</div></div>
-    <div class="kpi cidades"><div class="hex"></div><div class="label">Cidades atendidas</div>
-      <div class="value">${fmt(agg.cities.size)}</div><div class="kpi-sub">${fmt(found)} no mapa · média de ${avg.toLocaleString("pt-BR",{maximumFractionDigits:1})} transp./cidade</div></div>
-    <div class="kpi ufs"><div class="hex"></div><div class="label">Estados cobertos</div>
+    <div class="kpi"><div class="hex"></div><div class="label">Clientes ativos</div>
+      <div class="value">${fmt(agg.clientes)}</div><div class="kpi-sub">em ${fmt(agg.cities.size)} cidades</div></div>
+    <div class="kpi cidades"><div class="hex"></div><div class="label">Transportadoras</div>
+      <div class="value">${fmt(agg.transp.size)}</div>
+      <div class="kpi-sub">${top ? `Principal: <b style="color:#fff">${esc(top)}</b> · ${pct(agg.transp.get(top).clientes, agg.clientes)} dos clientes` : "—"}</div></div>
+    <div class="kpi ufs"><div class="hex"></div><div class="label">Estados com clientes</div>
       <div class="value">${agg.ufs.size}<span class="value-unit">de 27</span></div>
-      <div class="kpi-sub">${27-agg.ufs.size ? (27-agg.ufs.size)+" sem nenhuma cidade atendida" : "Cobertura em todos os estados"}</div></div>
+      <div class="kpi-sub">${27-agg.ufs.size ? (27-agg.ufs.size)+" sem clientes" : "Presença em todos os estados"}</div></div>
     <div class="kpi regiao"><div class="hex"></div><div class="label">Cidades com 1 só transportadora</div>
-      <div class="value">${fmt(single)}</div><div class="kpi-sub">${topReg ? "Região mais atendida: <b style='color:#fff'>"+topReg[0]+"</b> ("+fmt(topReg[1].cities.size)+" cidades)" : "—"}</div></div>`;
+      <div class="value">${fmt(single)}</div><div class="kpi-sub">${pct(single, agg.cities.size)} das cidades · ${fmt(singleCli)} clientes</div></div>`;
+}
+
+function renderLegend(){
+  const other = [...COLOR.entries()].filter(([,c])=>c===OTHER_COLOR).map(([t])=>t);
+  document.getElementById("tLegend").innerHTML = colorGroups().map(g=>{
+    const n = g.id==="__outras" ? other.reduce((s,t)=>s+TOTAL_BY_T.get(t),0) : TOTAL_BY_T.get(g.id);
+    const off = filters.transp && groupOf(filters.transp)!==g.id;
+    const tip = g.id==="__outras" ? ` data-tip="${esc(`<div class='tooltip-title'>Outras transportadoras</div>`+other.map(t=>`<div class='tooltip-row'><span class='k'>${esc(t)}</span><span class='v'>${fmt(TOTAL_BY_T.get(t))}</span></div>`).join(""))}"` : "";
+    return `<div class="it ${off?"off":""}" data-legend="${esc(g.id)}"${tip}><span class="dotc" style="background:${g.color}"></span><span class="nm" title="${esc(g.label)}">${esc(g.label)}</span><b style="color:#fff;font-weight:700">${fmt(n)}</b></div>`;
+  }).join("");
 }
 
 function renderMap(agg){
-  const maxUf = Math.max(1, ...[...agg.ufs.values()].map(v=>v.cities.size));
+  const maxUf = Math.max(1, ...[...agg.ufs.values()].map(v=>v.clientes));
   mapLayers.gStates.querySelectorAll("path").forEach(p=>{
     const u = agg.ufs.get(p.dataset.uf);
-    const n = u ? u.cities.size : 0;
+    const n = u ? u.clientes : 0;
     p.style.fill = n ? lerpColor(RAMP_LO, RAMP_HI, Math.sqrt(n/maxUf)) : "#"+EMPTY_FILL;
     p.classList.toggle("selected", filters.uf===p.dataset.uf);
   });
   const cities = [...agg.cities.values()].filter(c=>c.found);
-  const maxN = Math.max(1, ...cities.map(c=>c.ts.size));
-  const rOf = n => 3 + 11*Math.sqrt(n/maxN);
-  cities.sort((a,b)=>b.ts.size-a.ts.size);
+  const maxN = Math.max(1, ...cities.map(c=>c.clientes));
+  const rOf = n => 2.5 + 16*Math.sqrt(n/maxN);
+  cities.sort((a,b)=>b.clientes-a.clientes);
   mapLayers.gCities.innerHTML = cities.map(c=>{
     const [x,y] = project(c.lon,c.lat);
-    return `<circle class="city" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rOf(c.ts.size).toFixed(1)}" data-key="${esc(c.key)}"></circle>`;
+    return `<circle class="city" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rOf(c.clientes).toFixed(1)}" style="fill:${COLOR.get(mainT(c.byT))}" data-key="${esc(c.key)}"></circle>`;
   }).join("");
-  const mid = Math.max(1, Math.round(maxN/2));
-  const sizes = [...new Set([1, mid, maxN])];
+  const sizes = [...new Set([1, Math.max(1,Math.round(maxN/10)), maxN])];
   document.getElementById("mapLegend").innerHTML = `
-    <div><div class="lg-title">Cidades atendidas por estado</div>
+    <div><div class="lg-title">Clientes por estado</div>
       <div class="ramp" style="background:linear-gradient(90deg,#${RAMP_LO},#${RAMP_HI})"></div>
       <div class="ramp-labels"><span>1</span><span>${fmt(maxUf)}</span></div></div>
-    <div><div class="lg-title">Transportadoras na cidade</div>
-      <div class="bubble-legend">${sizes.map(n=>{const d=2*rOf(n)*0.62;return `<div><span class="dot" style="width:${d}px;height:${d}px"></span>${n}</div>`;}).join("")}</div></div>
-    <div><div class="lg-title">Sem cobertura</div><span style="display:inline-block;width:26px;height:12px;border-radius:3px;background:#${EMPTY_FILL};border:1px solid var(--border)"></span></div>`;
+    <div><div class="lg-title">Clientes na cidade</div>
+      <div class="bubble-legend">${sizes.map(n=>{const d=2*rOf(n)*0.62;return `<div><span class="dot" style="width:${d}px;height:${d}px;background:var(--text-secondary)"></span>${fmt(n)}</div>`;}).join("")}</div></div>
+    <div><div class="lg-title">Sem clientes</div><span style="display:inline-block;width:26px;height:12px;border-radius:3px;background:#${EMPTY_FILL};border:1px solid var(--border)"></span></div>`;
 }
 
-function onMapHover(e){
-  if(!lastAgg) return;
+function tRows(byT, total, limit){
+  const list = sortedByT(byT);
+  const shown = list.slice(0, limit);
+  return shown.map(([t,n])=>`<div class="tooltip-row"><span class="k"><span class="dotc" style="background:${COLOR.get(t)};margin-right:6px"></span>${esc(t)}</span><span class="v">${fmt(n)} · ${pct(n,total)}</span></div>`).join("") +
+    (list.length>shown.length ? `<div class="more">+ ${list.length-shown.length} outras</div>` : "");
+}
+document.addEventListener("mousemove", e=>{
   const t = e.target;
-  if(t.classList.contains("city")){
+  if(t.classList && t.classList.contains("city") && lastAgg){
     const c = lastAgg.cities.get(t.dataset.key);
     if(!c) return hideTip();
-    const list = [...c.ts].sort((a,b)=>a.localeCompare(b,"pt-BR"));
-    const shown = list.slice(0,10);
-    showTip(e, `<div class="tooltip-title">${esc(c.cidade)} / ${c.uf} · ${list.length} transportadora${list.length>1?"s":""}</div>` +
-      shown.map(n=>`<div class="tooltip-row"><span class="k">${esc(n)}</span></div>`).join("") +
-      (list.length>shown.length ? `<div class="more">+ ${list.length-shown.length} outras</div>` : ""));
-  } else if(t.classList.contains("uf")){
+    return showTip(e, `<div class="tooltip-title">${esc(c.cidade)} / ${c.uf} · ${fmt(c.clientes)} cliente${c.clientes>1?"s":""}</div>` + tRows(c.byT, c.clientes, 8));
+  }
+  if(t.classList && t.classList.contains("uf") && lastAgg){
     const uf = t.dataset.uf, u = lastAgg.ufs.get(uf);
-    showTip(e, `<div class="tooltip-title">${esc(UF_NOME[uf])} (${uf}) · ${UF_REGIAO[uf]}</div>
-      <div class="tooltip-row"><span class="k">Cidades atendidas</span><span class="v">${u?fmt(u.cities.size):0}</span></div>
-      <div class="tooltip-row"><span class="k">Transportadoras</span><span class="v">${u?fmt(u.ts.size):0}</span></div>`);
-  } else hideTip();
-}
+    return showTip(e, `<div class="tooltip-title">${esc(UF_NOME[uf])} (${uf}) · ${UF_REGIAO[uf]}</div>` +
+      (u ? `<div class="tooltip-row"><span class="k">Clientes</span><span class="v">${fmt(u.clientes)}</span></div>
+            <div class="tooltip-row"><span class="k">Cidades</span><span class="v">${fmt(u.cities.size)}</span></div>` + tRows(u.byT, u.clientes, 6)
+         : `<div class="more">Sem clientes</div>`));
+  }
+  const tipEl = t.closest && t.closest("[data-tip]");
+  if(tipEl) return showTip(e, tipEl.dataset.tip);
+  hideTip();
+});
 function showTip(e, html){
   const tip = els.tooltip;
   tip.innerHTML = html; tip.style.display = "block";
@@ -684,28 +860,31 @@ function showTip(e, html){
 function hideTip(){ els.tooltip.style.display = "none"; }
 
 function renderRegions(agg){
-  const data = Object.keys(REGIOES).map(r=>({r, c: agg.regs.get(r)?.cities.size||0, t: agg.regs.get(r)?.ts.size||0}));
-  const max = Math.max(1, ...data.map(d=>d.c));
-  document.getElementById("regionBars").innerHTML = data.map(d=>`
-    <div class="bar-row ${filters.regiao===d.r?"active":""}" data-regiao="${d.r}" title="Filtrar ${d.r}">
-      <div class="bar-name">${d.r}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${d.c? (d.c/max*100):0}%"></div></div>
-      <div class="bar-val"><b>${fmt(d.c)}</b> · ${fmt(d.t)} tr.</div>
+  const data = Object.keys(REGIOES).map(r=>({r, o: agg.regs.get(r)}));
+  const max = Math.max(1, ...data.map(d=>d.o?d.o.clientes:0));
+  document.getElementById("regionBars").innerHTML = data.map(({r,o})=>`
+    <div class="bar-row ${filters.regiao===r?"active":""}" data-regiao="${r}">
+      <div class="bar-name">${r}</div>
+      <div>${o ? stackHtml(o.byT, o.clientes, max) : `<div class="stack" style="width:0"></div>`}</div>
+      <div class="bar-val"><b>${fmt(o?o.clientes:0)}</b> · ${fmt(o?o.byT.size:0)} transp.</div>
     </div>`).join("");
 }
 
 function renderUfRank(agg){
-  const list = Object.keys(UF_NOME).map(u=>({u, c: agg.ufs.get(u)?.cities.size||0, t: agg.ufs.get(u)?.ts.size||0}))
-    .filter(d=>d.c || (!filters.regiao || UF_REGIAO[d.u]===filters.regiao))
-    .sort((a,b)=>b.c-a.c || b.t-a.t || a.u.localeCompare(b.u));
-  document.getElementById("ufRank").innerHTML = list.map(d=>`
-    <div class="rank-item ${filters.uf===d.u?"active":""}" data-uf="${d.u}">
-      <div class="sig">${d.u}</div><div class="nm">${esc(UF_NOME[d.u])}</div>
-      <div class="n">${d.c?fmt(d.c):"<span class='muted-cell'>0</span>"}</div><div class="n">${d.t?fmt(d.t):"<span class='muted-cell'>0</span>"}</div>
+  const max = Math.max(1, ...[...agg.ufs.values()].map(v=>v.clientes));
+  const list = Object.keys(UF_NOME).map(u=>({u, o: agg.ufs.get(u)}))
+    .filter(d=>d.o || !filters.regiao || UF_REGIAO[d.u]===filters.regiao)
+    .sort((a,b)=>(b.o?b.o.clientes:0)-(a.o?a.o.clientes:0) || a.u.localeCompare(b.u));
+  document.getElementById("ufRank").innerHTML = list.map(({u,o})=>`
+    <div class="rank-item ${filters.uf===u?"active":""}" data-uf="${u}">
+      <div class="sig">${u}</div>
+      <div class="nm-wrap"><div class="nm">${esc(UF_NOME[u])}</div>${o ? stackHtml(o.byT, o.clientes, max, true) : ""}</div>
+      <div class="n">${o?fmt(o.clientes):"<span class='muted-cell'>0</span>"}</div><div class="n">${o?o.byT.size:"<span class='muted-cell'>0</span>"}</div>
     </div>`).join("");
 }
 
-const sortState = {tblTransp:{key:"cidades",dir:-1}, tblCid:{key:"n",dir:-1}};
+const sortState = {tblTransp:{key:"clientes",dir:-1}, tblCid:{key:"clientes",dir:-1}};
+const NUM_KEYS = new Set(["clientes","pct","cidades","ufs","nt"]);
 function sortRows(rows, st){
   return rows.sort((a,b)=>{
     const va=a[st.key], vb=b[st.key];
@@ -714,42 +893,51 @@ function sortRows(rows, st){
   });
 }
 function renderTables(agg){
-  const tr = [...agg.transp.entries()].map(([nome,v])=>({nome, cidades:v.cities.size, ufs:v.ufs.size,
+  const tr = [...agg.transp.entries()].map(([nome,v])=>({nome, clientes:v.clientes, pct:v.clientes/(agg.clientes||1), cidades:v.cities.size, ufs:v.ufs.size,
     regioes:Object.keys(REGIOES).filter(r=>v.regs.has(r)).join(", ")}));
   sortRows(tr, sortState.tblTransp);
   document.querySelector("#tblTransp tbody").innerHTML = tr.length ? tr.map(r=>`
-    <tr><td title="${esc(r.nome)}"><a href="#" data-transp="${esc(r.nome)}" style="color:#fff;text-decoration:none;border-bottom:1px dotted var(--text-secondary)">${esc(r.nome)}</a></td>
-    <td class="num">${fmt(r.cidades)}</td><td class="num">${r.ufs}</td><td class="muted-cell">${esc(r.regioes)||"—"}</td></tr>`).join("")
-    : `<tr><td colspan="4" class="empty-state">Nenhuma transportadora com os filtros atuais.</td></tr>`;
+    <tr><td title="${esc(r.nome)}"><div class="transp-cell"><span class="dotc" style="background:${COLOR.get(r.nome)}"></span><a href="#" data-transp="${esc(r.nome)}">${esc(r.nome)}</a></div></td>
+    <td class="num">${fmt(r.clientes)}</td><td class="num muted-cell">${pct(r.clientes, agg.clientes)}</td><td class="num">${fmt(r.cidades)}</td><td class="num">${r.ufs}</td><td class="muted-cell">${esc(r.regioes)||"—"}</td></tr>`).join("")
+    : `<tr><td colspan="6" class="empty-state">Nenhuma transportadora com os filtros atuais.</td></tr>`;
   document.getElementById("countTransp").textContent = `${fmt(tr.length)} transportadoras`;
 
-  const cs = [...agg.cities.values()].map(c=>({cidade:c.cidade, uf:c.uf||"—", regiao:c.regiao||"—", n:c.ts.size,
-    lista:[...c.ts].sort((a,b)=>a.localeCompare(b,"pt-BR")).join(", "), found:c.found}));
+  const cs = [...agg.cities.values()].map(c=>({cidade:c.cidade, uf:c.uf||"—", clientes:c.clientes, nt:c.byT.size,
+    lista:sortedByT(c.byT).map(([t,n])=>`${t} (${n})`).join(", "), found:c.found}));
   sortRows(cs, sortState.tblCid);
-  document.querySelector("#tblCid tbody").innerHTML = cs.length ? cs.map(r=>`
-    <tr><td>${esc(r.cidade)}${r.found?"":" <span class='badge'>fora do mapa</span>"}</td><td>${esc(r.uf)}</td><td class="muted-cell">${esc(r.regiao)}</td>
-    <td class="num">${r.n}</td><td class="muted-cell" title="${esc(r.lista)}">${esc(r.lista)}</td></tr>`).join("")
+  const shown = cs.slice(0, 1000);
+  document.querySelector("#tblCid tbody").innerHTML = shown.length ? shown.map(r=>`
+    <tr><td>${esc(r.cidade)}${r.found?"":" <span class='badge'>fora do mapa</span>"}</td><td>${esc(r.uf)}</td>
+    <td class="num">${fmt(r.clientes)}</td><td class="num">${r.nt}</td><td class="muted-cell" title="${esc(r.lista)}">${esc(r.lista)}</td></tr>`).join("")
     : `<tr><td colspan="5" class="empty-state">Nenhuma cidade com os filtros atuais.</td></tr>`;
-  document.getElementById("countCid").textContent = `${fmt(cs.length)} cidades`;
+  document.getElementById("countCid").textContent = `${fmt(cs.length)} cidades` + (cs.length>shown.length ? ` (mostrando ${fmt(shown.length)} — use os filtros)` : "");
 }
 
+function renderCorrections(){
+  document.getElementById("corrPanel").classList.toggle("hide", !CORRECTIONS.length);
+  document.getElementById("countCorr").textContent = `${fmt(CORRECTIONS.reduce((s,c)=>s+c.n,0))} clientes`;
+  document.getElementById("corrBody").innerHTML = CORRECTIONS.map(c=>
+    `<tr><td>${esc(c.c)}</td><td>${esc(c.u)||"—"}</td><td>${esc(c.to)}</td><td class="num">${fmt(c.n)}</td></tr>`).join("");
+}
 function renderNotFound(rows){
-  const nf = rows.filter(r=>!r.found);
+  const nf = rows.filter(r=>!r.found).sort((a,b)=>b.n-a.n);
+  const tot = nf.reduce((s,r)=>s+r.n,0);
   document.getElementById("notFoundPanel").classList.toggle("hide", !nf.length);
-  document.getElementById("countNF").textContent = `${fmt(nf.length)} linhas`;
+  document.getElementById("countNF").textContent = `${fmt(tot)} clientes`;
   document.getElementById("nfBody").innerHTML = nf.slice(0,500).map(r=>
-    `<tr><td>${esc(r.raw.c)}</td><td>${esc(r.raw.u)||"—"}</td><td>${esc(r.t)}</td></tr>`).join("");
+    `<tr><td>${esc(r.raw.c)||"(vazio)"}</td><td>${esc(r.raw.u)||"—"}</td><td>${esc(r.t)}</td><td class="num">${fmt(r.n)}</td></tr>`).join("");
 }
 
 /* ---------- Interações ---------- */
 function setFilter(k, v){ filters[k] = v; render(); }
 document.getElementById("fSearch").addEventListener("input", e=>setFilter("search", e.target.value));
 document.getElementById("fTransp").addEventListener("change", e=>setFilter("transp", e.target.value));
-document.getElementById("fRegiao").addEventListener("change", e=>{
-  filters.regiao = e.target.value;
+function setRegiao(r){
+  filters.regiao = r;
   if(filters.uf && filters.regiao && UF_REGIAO[filters.uf]!==filters.regiao) filters.uf = "";
   render();
-});
+}
+document.getElementById("fRegiao").addEventListener("change", e=>setRegiao(e.target.value));
 document.getElementById("fUf").addEventListener("change", e=>setFilter("uf", e.target.value));
 document.getElementById("fClear").addEventListener("click", ()=>{
   Object.assign(filters,{search:"",transp:"",regiao:"",uf:""});
@@ -758,14 +946,15 @@ document.getElementById("fClear").addEventListener("click", ()=>{
 });
 document.getElementById("regionBars").addEventListener("click", e=>{
   const row = e.target.closest("[data-regiao]"); if(!row) return;
-  const r = row.dataset.regiao;
-  filters.regiao = filters.regiao===r ? "" : r;
-  if(filters.uf && filters.regiao && UF_REGIAO[filters.uf]!==filters.regiao) filters.uf = "";
-  render();
+  setRegiao(filters.regiao===row.dataset.regiao ? "" : row.dataset.regiao);
 });
 document.getElementById("ufRank").addEventListener("click", e=>{
   const row = e.target.closest("[data-uf]"); if(!row) return;
   setFilter("uf", filters.uf===row.dataset.uf ? "" : row.dataset.uf);
+});
+document.getElementById("tLegend").addEventListener("click", e=>{
+  const it = e.target.closest("[data-legend]"); if(!it || it.dataset.legend==="__outras") return;
+  setFilter("transp", filters.transp===it.dataset.legend ? "" : it.dataset.legend);
 });
 document.querySelector("#tblTransp tbody").addEventListener("click", e=>{
   const a = e.target.closest("[data-transp]"); if(!a) return;
@@ -776,7 +965,7 @@ document.querySelector("#tblTransp tbody").addEventListener("click", e=>{
 ["tblTransp","tblCid"].forEach(id=>{
   document.querySelectorAll(`#${id} thead th[data-key]`).forEach(th=>th.addEventListener("click", ()=>{
     const st = sortState[id], k = th.dataset.key;
-    if(st.key===k) st.dir *= -1; else { st.key = k; st.dir = (k==="cidades"||k==="ufs"||k==="n") ? -1 : 1; }
+    if(st.key===k) st.dir *= -1; else { st.key = k; st.dir = NUM_KEYS.has(k) ? -1 : 1; }
     if(lastAgg) renderTables(lastAgg);
   }));
 });
@@ -788,7 +977,8 @@ document.getElementById("modeToggle").addEventListener("click", e=>{
 });
 
 document.getElementById("btnDownload").addEventListener("click", ()=>{
-  const payload = {generated: (GENERATED_AT||new Date()).toISOString(), rows: RECORDS.map(r=>r.raw)};
+  const payload = {generated: (GENERATED_AT||new Date()).toISOString(), note: NOTE,
+    rows: RECORDS.map(r=>({t:r.t, c:r.found ? r.cidade : r.raw.c, u:r.found ? r.uf : r.raw.u, n:r.n}))};
   const json = JSON.stringify(payload).replace(/</g,"\\u003c");
   const html = TEMPLATE.replace("const EMBEDDED = null;", "const EMBEDDED = " + json + ";");
   const blob = new Blob([html], {type:"text/html;charset=utf-8"});
@@ -804,6 +994,7 @@ if(EMBEDDED){
   document.body.classList.add("embedded");
   document.getElementById("generateBar").classList.add("hide");
   GENERATED_AT = new Date(EMBEDDED.generated);
+  NOTE = EMBEDDED.note || "";
   RECORDS = buildRecords(EMBEDDED.rows);
   initDashboard();
 }
