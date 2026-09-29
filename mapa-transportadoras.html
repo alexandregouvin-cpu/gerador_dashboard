@@ -987,7 +987,7 @@ const Map3D = (()=>{
   function heatStops(){
     // sem filtro de transportadora: verde → amarelo → branco; com filtro: na cor da transportadora
     if(filters.transp){ const c = hexRgb(COLOR.get(filters.transp) || OTHER_COLOR); return [[0,c],[0.6,c],[1,[255,255,255]]]; }
-    return [[0,[155,240,195]],[0.45,[155,240,195]],[0.75,[250,235,10]],[1,[255,255,255]]];
+    return [[0,[120,222,176]],[0.5,[175,244,210]],[1,[255,255,255]]];   // escala neutra: verde → branco (só concentração)
   }
   api.heatGradient = ()=> heatStops().map(([p,c],i,arr)=>`rgba(${c.join(",")},${i===0?0.25:1}) ${Math.round(p*100)}%`).join(",");
   function drawHeat(agg, cities, maxN, maxUf){
