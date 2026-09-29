@@ -247,18 +247,6 @@
   .tr-bar{grid-column:1 / -1;height:6px;border-radius:0 3px 3px 0;background:rgba(255,255,255,0.06);overflow:hidden;}
   .tr-bar i{display:block;height:100%;border-radius:0 3px 3px 0;}
   .tr-meta{grid-column:1 / -1;font-size:11px;color:var(--text-secondary);margin-top:-2px;}
-  .uf-panel{margin-bottom:20px;}
-  .uf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 22px;}
-  .uf-item{padding:9px 8px;border-radius:8px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.06);}
-  .uf-item:hover{background:rgba(155,240,195,0.05);}
-  .uf-item.active{background:rgba(250,235,10,0.08);}
-  .uf-item.empty{opacity:.45;}
-  .uf-top{display:flex;align-items:baseline;gap:8px;font-size:13px;margin-bottom:6px;}
-  .uf-top .sig{font-family:'Poppins',sans-serif;font-weight:800;width:26px;}
-  .uf-top .nm{color:var(--text-secondary);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .uf-top .n{font-weight:700;white-space:nowrap;}
-  .uf-top .n small{color:var(--text-secondary);font-weight:500;}
-  .uf-item .stack{height:8px;width:100%;}
   .tooltip-overlay .tooltip-sec{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);font-weight:800;margin:10px 0 4px;}
   .tooltip-overlay .cli{display:flex;gap:8px;align-items:center;font-size:12px;padding:3px 0;}
   .tooltip-overlay .cli code{font-family:'Inter',sans-serif;color:var(--accent-mint);font-weight:700;font-size:11.5px;min-width:52px;}
@@ -285,7 +273,7 @@
   .drawer-body td{max-width:none;}
   .drawer-body td.code{color:var(--accent-mint);font-weight:700;}
   #mapSvg .city{cursor:pointer;}
-  @media (max-width: 640px){ .uf-grid{grid-template-columns:1fr;} .tr-row{grid-template-columns:minmax(0,1fr) 96px;} }
+  @media (max-width: 640px){ .tr-row{grid-template-columns:minmax(0,1fr) 96px;} }
 </style>
 </head>
 <body class="mode-individual">
@@ -366,13 +354,6 @@
           <div id="transpBars"></div>
         </div>
       </div>
-    </div>
-
-    <div class="chart-panel uf-panel">
-      <div class="uf-panel-head">
-        <div><h3>Por estado</h3><p class="sub">Divisão dos clientes entre as transportadoras em cada estado · clique para filtrar</p></div>
-      </div>
-      <div class="uf-grid" id="ufGrid"></div>
     </div>
 
     <div class="tables-row">
@@ -815,7 +796,6 @@ function render(){
   renderMap(agg);
   renderRegions(agg);
   renderTranspBars(agg);
-  renderUfGrid(agg);
   renderTables(agg);
   document.getElementById("fTransp").value = filters.transp;
   document.getElementById("fRegiao").value = filters.regiao;
@@ -984,18 +964,6 @@ function renderTranspBars(agg){
     </div>`).join("") : `<div class="empty-state">Nenhuma transportadora com os filtros atuais.</div>`;
 }
 
-function renderUfGrid(agg){
-  const list = Object.keys(UF_NOME).map(u=>({u, o: agg.ufs.get(u)}))
-    .filter(d=>d.o || !filters.regiao || UF_REGIAO[d.u]===filters.regiao)
-    .sort((a,b)=>(b.o?b.o.clientes:0)-(a.o?a.o.clientes:0) || a.u.localeCompare(b.u));
-  document.getElementById("ufGrid").innerHTML = list.map(({u,o})=>`
-    <div class="uf-item ${filters.uf===u?"active":""} ${o?"":"empty"}" data-uf="${u}">
-      <div class="uf-top"><span class="sig">${u}</span><span class="nm">${esc(UF_NOME[u])}</span>
-        <span class="n">${o?fmt(o.clientes):0} <small>cli · ${o?o.byT.size:0} transp.</small></span></div>
-      ${o ? stackHtml(o.byT, o.clientes, o.clientes) : `<div class="stack" style="width:100%"></div>`}
-    </div>`).join("");
-}
-
 const sortState = {tblTransp:{key:"clientes",dir:-1}, tblCid:{key:"clientes",dir:-1}};
 const NUM_KEYS = new Set(["clientes","pct","cidades","ufs","nt"]);
 function sortRows(rows, st){
@@ -1051,10 +1019,6 @@ document.getElementById("fClear").addEventListener("click", ()=>{
 document.getElementById("regionBars").addEventListener("click", e=>{
   const row = e.target.closest("[data-regiao]"); if(!row) return;
   setRegiao(filters.regiao===row.dataset.regiao ? "" : row.dataset.regiao);
-});
-document.getElementById("ufGrid").addEventListener("click", e=>{
-  const row = e.target.closest("[data-uf]"); if(!row) return;
-  setFilter("uf", filters.uf===row.dataset.uf ? "" : row.dataset.uf);
 });
 document.getElementById("transpBars").addEventListener("click", e=>{
   const row = e.target.closest("[data-transp]"); if(!row) return;
