@@ -274,22 +274,21 @@
   .drawer-body td.code{color:var(--accent-mint);font-weight:700;}
   #mapSvg .city{cursor:pointer;}
   @media (max-width: 640px){ .tr-row{grid-template-columns:minmax(0,1fr) 96px;} }
-  .rg-row{padding:9px 8px 10px;border-radius:10px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.06);}
-  .rg-row:last-child{border-bottom:none;}
-  .rg-row:hover{background:rgba(155,240,195,0.05);}
-  .rg-row.active{background:rgba(250,235,10,0.08);}
-  .rg-row.empty{opacity:.45;}
-  .rg-head{display:flex;align-items:center;gap:8px;}
-  .rg-name{font-weight:700;font-size:13.5px;}
-  .rg-pill{font-size:11px;font-weight:700;color:var(--accent-mint);background:rgba(155,240,195,0.1);border-radius:20px;padding:2px 8px;}
-  .rg-num{margin-left:auto;font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;line-height:1;}
-  .rg-track{height:6px;border-radius:3px;background:rgba(255,255,255,0.07);margin:8px 0 6px;overflow:hidden;}
-  .rg-track i{display:block;height:100%;background:var(--accent-mint);border-radius:0 3px 3px 0;}
-  .rg-meta{font-size:11.5px;color:var(--text-secondary);display:flex;align-items:center;gap:5px;white-space:nowrap;min-width:0;}
-  .rg-meta b{color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;min-width:0;}
-  .rg-meta .dotc{flex-shrink:0;}
-  .rg-share{flex-shrink:0;}
-  body.mode-tv .rg-num{font-size:26px;}
+  #regionBars{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+  .rg-card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:12px;display:grid;grid-template-columns:64px minmax(0,1fr);gap:2px 12px;align-items:center;cursor:pointer;transition:border-color .12s ease,background .12s ease;}
+  .rg-card:first-child{grid-column:1 / -1;}
+  .rg-card:hover{border-color:var(--accent-mint);}
+  .rg-card.active{border-color:var(--accent-yellow);background:rgba(250,235,10,0.06);}
+  .rg-card.empty{opacity:.45;}
+  .rg-ring{grid-row:1 / span 3;position:relative;width:64px;height:64px;}
+  .rg-ring span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--accent-mint);}
+  .rg-name{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);font-weight:700;}
+  .rg-num{font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;line-height:1.1;}
+  .rg-top{font-size:11px;color:var(--text-secondary);display:flex;align-items:center;gap:5px;white-space:nowrap;min-width:0;}
+  .rg-top b{color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+  .rg-top .dotc{flex-shrink:0;} .rg-share{flex-shrink:0;}
+  body.mode-tv .rg-num{font-size:28px;}
+  @media (max-width: 420px){ #regionBars{grid-template-columns:1fr;} }
 </style>
 </head>
 <body class="mode-individual">
@@ -362,7 +361,7 @@
         <div class="chart-panel">
           <h3>Por região</h3>
           <p class="sub">Clientes e participação no total · passe o mouse para ver as transportadoras</p>
-          <div class="bars" id="regionBars"></div>
+          <div id="regionBars"></div>
         </div>
         <div class="chart-panel tr-panel">
           <h3>Por transportadora</h3>
@@ -958,23 +957,24 @@ function showTip(e, html){
 function hideTip(){ els.tooltip.style.display = "none"; }
 
 function renderRegions(agg){
-  // ordenado por clientes; barra = participação no total (uma cor só); detalhe por transportadora no tooltip
+  // cartões com rosca: anel = participação da região no total; maior região ocupa a linha inteira
   const data = Object.keys(REGIOES).map(r=>({r, o: agg.regs.get(r)}))
     .sort((a,b)=>(b.o?b.o.clientes:0)-(a.o?a.o.clientes:0));
   const total = data.reduce((s,d)=>s+(d.o?d.o.clientes:0),0);
+  const C = 2*Math.PI*26;
   document.getElementById("regionBars").innerHTML = data.map(({r,o})=>{
-    const n = o ? o.clientes : 0, share = total ? n/total : 0;
+    const n = o ? o.clientes : 0, f = total ? n/total : 0;
     const top = o ? mainT(o.byT) : null;
-    const tip = o ? ` data-tip="${esc(`<div class='tooltip-title'>${r} · ${fmt(n)} clientes</div>` + tRows(o.byT, n, 8))}"` : "";
+    const tip = o ? ` data-tip="${esc(`<div class='tooltip-title'>${r} · ${fmt(n)} clientes · ${o.byT.size} transp.</div>` + tRows(o.byT, n, 8))}"` : "";
     return `
-    <div class="rg-row ${filters.regiao===r?"active":""} ${n?"":"empty"}" data-regiao="${r}"${tip}>
-      <div class="rg-head">
-        <span class="rg-name">${r}</span>
-        <span class="rg-pill">${pct(n,total)}</span>
-        <span class="rg-num">${fmt(n)}</span>
-      </div>
-      <div class="rg-track"><i style="width:${n ? Math.max(1.5, share*100) : 0}%"></i></div>
-      <div class="rg-meta">${o ? `${o.byT.size} transportadora${o.byT.size>1?"s":""} · principal <span class="dotc" style="background:${COLOR.get(top)}"></span> <b title="${esc(top)}">${esc(top)}</b><span class="rg-share">${pct(o.byT.get(top), n)}</span>` : "Sem clientes"}</div>
+    <div class="rg-card ${filters.regiao===r?"active":""} ${n?"":"empty"}" data-regiao="${r}"${tip}>
+      <div class="rg-ring"><svg width="64" height="64" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
+        ${n ? `<circle cx="32" cy="32" r="26" fill="none" stroke="var(--accent-mint)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${Math.max(2, f*C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/>` : ""}
+      </svg><span>${pct(n,total)}</span></div>
+      <div class="rg-name">${r}</div>
+      <div class="rg-num">${fmt(n)}</div>
+      <div class="rg-top">${o ? `<span class="dotc" style="background:${COLOR.get(top)}"></span><b title="${esc(top)}">${esc(top)}</b><span class="rg-share">${pct(o.byT.get(top), n)}</span>` : "Sem clientes"}</div>
     </div>`;
   }).join("");
 }
