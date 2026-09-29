@@ -130,8 +130,11 @@
   #mapSvg{width:100%;height:auto;display:block;max-height:78vh;}
   body.mode-tv #mapSvg{max-height:calc(100vh - 330px);}
   #mapSvg .uf{stroke:var(--bg-0);stroke-width:1.5;cursor:pointer;transition:fill .15s ease;}
-  #mapSvg .uf:hover{stroke:var(--accent-mint);stroke-width:2;}
-  #mapSvg .uf.selected{stroke:var(--accent-yellow);stroke-width:2.5;}
+  #mapSvg .uf:hover{filter:brightness(1.12);}
+  /* contornos em camada própria, acima de todos os estados, para não ficarem cobertos pelos vizinhos */
+  #mapSvg .uf-outline{fill:none;pointer-events:none;stroke-linejoin:round;}
+  #mapSvg .uf-outline.hover{stroke:var(--accent-mint);stroke-width:2.5;}
+  #mapSvg .uf-outline.sel{stroke:var(--accent-yellow);stroke-width:3;}
   #mapSvg .uf-label{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;fill:rgba(255,255,255,0.55);pointer-events:none;text-anchor:middle;dominant-baseline:middle;}
   #mapSvg .city{fill:var(--accent-yellow);fill-opacity:.85;stroke:var(--bg-0);stroke-width:1.5;cursor:pointer;}
   #mapSvg .city:hover{fill-opacity:1;stroke:#fff;stroke-width:2;}
@@ -790,7 +793,11 @@ function drawBaseMap(){
     path.dataset.uf = sig;
     gStates.appendChild(path);
   });
-  els.svg.append(gStates, gLabels, gCities);
+  const gOutline = document.createElementNS(ns,"g");
+  const selOutline = document.createElementNS(ns,"path"); selOutline.setAttribute("class","uf-outline sel");
+  const hovOutline = document.createElementNS(ns,"path"); hovOutline.setAttribute("class","uf-outline hover");
+  gOutline.append(selOutline, hovOutline);
+  els.svg.append(gStates, gOutline, gLabels, gCities);
   gStates.querySelectorAll("path").forEach(path=>{
     const b = path.getBBox();
     const sig = path.dataset.uf;
@@ -802,7 +809,12 @@ function drawBaseMap(){
     t.textContent = sig;
     gLabels.appendChild(t);
   });
-  mapLayers = {gStates, gCities};
+  mapLayers = {gStates, gCities, selOutline, hovOutline};
+  gStates.addEventListener("mouseover", e=>{
+    const uf = e.target.dataset && e.target.dataset.uf;
+    hovOutline.setAttribute("d", uf ? GEO.states[uf].d : "");
+  });
+  gStates.addEventListener("mouseleave", ()=>hovOutline.setAttribute("d",""));
   gStates.addEventListener("click", e=>{
     const uf = e.target.dataset && e.target.dataset.uf;
     if(!uf) return;
@@ -864,8 +876,9 @@ function renderMap(agg){
     const u = agg.ufs.get(p.dataset.uf);
     const n = u ? u.clientes : 0;
     p.style.fill = n ? lerpColor(RAMP_LO, RAMP_HI, Math.sqrt(n/maxUf)) : "#"+EMPTY_FILL;
-    p.classList.toggle("selected", filters.uf===p.dataset.uf);
+
   });
+  mapLayers.selOutline.setAttribute("d", filters.uf ? GEO.states[filters.uf].d : "");
   const cities = [...agg.cities.values()].filter(c=>c.found);
   const maxN = Math.max(1, ...cities.map(c=>c.clientes));
   const rOf = n => 2.5 + 16*Math.sqrt(n/maxN);
