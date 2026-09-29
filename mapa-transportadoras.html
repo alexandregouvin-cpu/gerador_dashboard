@@ -128,7 +128,7 @@
 
   .map-wrap{position:relative;width:100%;}
   #mapSvg{width:100%;height:auto;display:block;max-height:78vh;}
-  body.mode-tv #mapSvg{max-height:calc(100vh - 330px);}
+  .map-panel{min-width:0;}
   #mapSvg .uf{stroke:var(--bg-0);stroke-width:1.5;cursor:pointer;transition:fill .15s ease;}
   #mapSvg .uf:hover{filter:brightness(1.12);}
   /* contornos em camada própria, acima de todos os estados, para não ficarem cobertos pelos vizinhos */
@@ -138,13 +138,25 @@
   #mapSvg .uf-label{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;fill:rgba(255,255,255,0.55);pointer-events:none;text-anchor:middle;dominant-baseline:middle;}
   #mapSvg .city{fill:var(--accent-yellow);fill-opacity:.85;stroke:var(--bg-0);stroke-width:1.5;cursor:pointer;}
   #mapSvg .city:hover{fill-opacity:1;stroke:#fff;stroke-width:2;}
-  .map-legend{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-end;margin-top:10px;font-size:11.5px;color:var(--text-secondary);}
-  .map-legend .lg-title{font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:10.5px;margin-bottom:6px;}
-  .ramp{width:180px;height:10px;border-radius:5px;}
-  .ramp-labels{display:flex;justify-content:space-between;width:180px;margin-top:3px;}
-  .bubble-legend{display:flex;align-items:flex-end;gap:14px;}
-  .bubble-legend div{display:flex;flex-direction:column;align-items:center;gap:4px;}
-  .bubble-legend span.dot{display:block;border-radius:50%;background:var(--accent-yellow);opacity:.85;border:1.5px solid var(--bg-0);}
+  /* legenda em cartão translúcido sobre o mapa (canto inferior esquerdo, área de oceano) */
+  .map-legend{position:absolute;left:10px;bottom:10px;z-index:2;display:flex;gap:22px;align-items:flex-end;
+    padding:12px 14px;border-radius:12px;border:1px solid rgba(155,240,195,0.18);
+    background:rgba(3,47,33,0.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    box-shadow:0 10px 24px rgba(0,0,0,0.35);font-size:11px;color:var(--text-secondary);font-variant-numeric:tabular-nums;}
+  .map-legend:empty{display:none;}
+  .map-legend .lg-title{font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:10px;margin-bottom:8px;color:var(--accent-mint);}
+  .lg-steps{display:flex;align-items:center;gap:2px;}
+  .lg-steps i{display:block;width:24px;height:10px;border-radius:3px;cursor:default;}
+  .lg-steps i.none{margin-right:8px;border:1px solid rgba(155,240,195,0.25);}
+  .lg-scale{display:flex;margin-top:5px;font-size:10.5px;}
+  .lg-scale .z{width:24px;margin-right:10px;text-align:center;}
+  .lg-scale .r{display:flex;justify-content:space-between;width:128px;}
+  .lg-bubbles{display:flex;align-items:flex-end;gap:14px;}
+  .lg-bubbles div{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;}
+  .lg-bubbles .dot{display:block;border-radius:50%;background:rgba(191,239,218,0.55);border:1px solid var(--text-secondary);}
+  @media (max-width: 1000px){
+    .map-legend{position:static;margin-top:10px;width:fit-content;max-width:100%;flex-wrap:wrap;}
+  }
 
   .bars{display:flex;flex-direction:column;gap:12px;}
   .bar-row{display:grid;grid-template-columns:110px minmax(0,1fr) 92px;gap:10px;align-items:center;font-size:13px;cursor:pointer;padding:2px 0;border-radius:6px;}
@@ -367,12 +379,12 @@
     <div class="kpis" id="kpis"></div>
 
     <div class="map-row">
-      <div class="chart-panel">
+      <div class="chart-panel map-panel">
         <h3>Mapa de clientes por transportadora</h3>
         <p class="sub">Cada círculo é uma cidade com clientes ativos. O tamanho indica o nº de clientes e a cor, a transportadora que atende a maioria deles. Estados mais claros têm mais clientes. Clique num estado para filtrar.</p>
         <div class="t-legend" id="tLegend"></div>
-        <div class="map-wrap"><svg id="mapSvg" role="img" aria-label="Mapa do Brasil com clientes por cidade e transportadora"></svg></div>
-        <div class="map-legend" id="mapLegend"></div>
+        <div class="map-wrap"><svg id="mapSvg" role="img" aria-label="Mapa do Brasil com clientes por cidade e transportadora"></svg>
+          <div class="map-legend" id="mapLegend"></div></div>
       </div>
       <div class="side-col">
         <div class="chart-panel">
@@ -887,15 +899,36 @@ function renderMap(agg){
     const [x,y] = project(c.lon,c.lat);
     return `<circle class="city" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rOf(c.clientes).toFixed(1)}" style="fill:${COLOR.get(mainT(c.byT))}" data-key="${esc(c.key)}"></circle>`;
   }).join("");
-  const sizes = [...new Set([1, Math.max(1,Math.round(maxN/10)), maxN])];
-  document.getElementById("mapLegend").innerHTML = `
-    <div><div class="lg-title">Clientes por estado</div>
-      <div class="ramp" style="background:linear-gradient(90deg,#${RAMP_LO},#${RAMP_HI})"></div>
-      <div class="ramp-labels"><span>1</span><span>${fmt(maxUf)}</span></div></div>
-    <div><div class="lg-title">Clientes na cidade</div>
-      <div class="bubble-legend">${sizes.map(n=>{const d=2*rOf(n)*0.62;return `<div><span class="dot" style="width:${d}px;height:${d}px;background:var(--text-secondary)"></span>${fmt(n)}</div>`;}).join("")}</div></div>
-    <div><div class="lg-title">Sem clientes</div><span style="display:inline-block;width:26px;height:12px;border-radius:3px;background:#${EMPTY_FILL};border:1px solid var(--border)"></span></div>`;
+  LEGEND_STATE = {maxUf, maxN};
+  renderMapLegend();
 }
+
+let LEGEND_STATE = null;
+function renderMapLegend(){
+  const el = document.getElementById("mapLegend");
+  if(!LEGEND_STATE) return;
+  const {maxUf, maxN} = LEGEND_STATE;
+  // Estados: 5 degraus da mesma escala usada no mapa (cor = raiz de clientes/máximo)
+  const STEPS = 5;
+  const steps = Array.from({length:STEPS}, (_,k)=>{
+    const lo = Math.max(1, Math.ceil(maxUf*Math.pow(k/STEPS,2))), hi = Math.max(lo, Math.round(maxUf*Math.pow((k+1)/STEPS,2)));
+    return {c: lerpColor(RAMP_LO, RAMP_HI, (k+0.5)/STEPS), lo, hi};
+  });
+  const stepHtml = `<i class="none" style="background:#${EMPTY_FILL}" data-tip="${esc("<div class='tooltip-title'>Sem clientes</div>")}"></i>` +
+    steps.map(s=>`<i style="background:${s.c}" data-tip="${esc(`<div class='tooltip-title'>Estados com</div><div class='tooltip-row'><span class='k'>Clientes</span><span class='v'>${fmt(s.lo)} – ${fmt(s.hi)}</span></div>`)}"></i>`).join("");
+  // Cidades: círculos lado a lado (1, ~10% do máximo e máximo)
+  const rMap = n => 2.5 + 16*Math.sqrt(n/maxN);
+  const sizes = [...new Set([1, Math.max(1, Math.round(maxN/10)), maxN])];
+  const bubHtml = sizes.map(n=>{ const d = 2*rMap(n)*0.62;
+    return `<div><span class="dot" style="width:${d.toFixed(1)}px;height:${d.toFixed(1)}px"></span>${fmt(n)}</div>`; }).join("");
+  el.innerHTML = `
+    <div><div class="lg-title">Clientes por estado</div>
+      <div class="lg-steps">${stepHtml}</div>
+      <div class="lg-scale"><span class="z">0</span><span class="r"><span>1</span><span>${fmt(maxUf)}</span></span></div></div>
+    <div><div class="lg-title">Clientes na cidade</div>
+      <div class="lg-bubbles">${bubHtml}</div></div>`;
+}
+window.addEventListener("resize", ()=>{ if(LEGEND_STATE) renderMapLegend(); });
 
 function tRows(byT, total, limit){
   const list = sortedByT(byT);
