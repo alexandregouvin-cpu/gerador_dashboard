@@ -274,6 +274,22 @@
   .drawer-body td.code{color:var(--accent-mint);font-weight:700;}
   #mapSvg .city{cursor:pointer;}
   @media (max-width: 640px){ .tr-row{grid-template-columns:minmax(0,1fr) 96px;} }
+  .rg-row{padding:9px 8px 10px;border-radius:10px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .rg-row:last-child{border-bottom:none;}
+  .rg-row:hover{background:rgba(155,240,195,0.05);}
+  .rg-row.active{background:rgba(250,235,10,0.08);}
+  .rg-row.empty{opacity:.45;}
+  .rg-head{display:flex;align-items:center;gap:8px;}
+  .rg-name{font-weight:700;font-size:13.5px;}
+  .rg-pill{font-size:11px;font-weight:700;color:var(--accent-mint);background:rgba(155,240,195,0.1);border-radius:20px;padding:2px 8px;}
+  .rg-num{margin-left:auto;font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;line-height:1;}
+  .rg-track{height:6px;border-radius:3px;background:rgba(255,255,255,0.07);margin:8px 0 6px;overflow:hidden;}
+  .rg-track i{display:block;height:100%;background:var(--accent-mint);border-radius:0 3px 3px 0;}
+  .rg-meta{font-size:11.5px;color:var(--text-secondary);display:flex;align-items:center;gap:5px;white-space:nowrap;min-width:0;}
+  .rg-meta b{color:#fff;font-weight:600;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+  .rg-meta .dotc{flex-shrink:0;}
+  .rg-share{flex-shrink:0;}
+  body.mode-tv .rg-num{font-size:26px;}
 </style>
 </head>
 <body class="mode-individual">
@@ -345,7 +361,7 @@
       <div class="side-col">
         <div class="chart-panel">
           <h3>Por região</h3>
-          <p class="sub">Clientes por transportadora · clique para filtrar</p>
+          <p class="sub">Clientes e participação no total · passe o mouse para ver as transportadoras</p>
           <div class="bars" id="regionBars"></div>
         </div>
         <div class="chart-panel tr-panel">
@@ -942,14 +958,25 @@ function showTip(e, html){
 function hideTip(){ els.tooltip.style.display = "none"; }
 
 function renderRegions(agg){
-  const data = Object.keys(REGIOES).map(r=>({r, o: agg.regs.get(r)}));
-  const max = Math.max(1, ...data.map(d=>d.o?d.o.clientes:0));
-  document.getElementById("regionBars").innerHTML = data.map(({r,o})=>`
-    <div class="bar-row ${filters.regiao===r?"active":""}" data-regiao="${r}">
-      <div class="bar-name">${r}</div>
-      <div>${o ? stackHtml(o.byT, o.clientes, max) : `<div class="stack" style="width:0"></div>`}</div>
-      <div class="bar-val"><b>${fmt(o?o.clientes:0)}</b> · ${fmt(o?o.byT.size:0)} transp.</div>
-    </div>`).join("");
+  // ordenado por clientes; barra = participação no total (uma cor só); detalhe por transportadora no tooltip
+  const data = Object.keys(REGIOES).map(r=>({r, o: agg.regs.get(r)}))
+    .sort((a,b)=>(b.o?b.o.clientes:0)-(a.o?a.o.clientes:0));
+  const total = data.reduce((s,d)=>s+(d.o?d.o.clientes:0),0);
+  document.getElementById("regionBars").innerHTML = data.map(({r,o})=>{
+    const n = o ? o.clientes : 0, share = total ? n/total : 0;
+    const top = o ? mainT(o.byT) : null;
+    const tip = o ? ` data-tip="${esc(`<div class='tooltip-title'>${r} · ${fmt(n)} clientes</div>` + tRows(o.byT, n, 8))}"` : "";
+    return `
+    <div class="rg-row ${filters.regiao===r?"active":""} ${n?"":"empty"}" data-regiao="${r}"${tip}>
+      <div class="rg-head">
+        <span class="rg-name">${r}</span>
+        <span class="rg-pill">${pct(n,total)}</span>
+        <span class="rg-num">${fmt(n)}</span>
+      </div>
+      <div class="rg-track"><i style="width:${n ? Math.max(1.5, share*100) : 0}%"></i></div>
+      <div class="rg-meta">${o ? `${o.byT.size} transportadora${o.byT.size>1?"s":""} · principal <span class="dotc" style="background:${COLOR.get(top)}"></span> <b title="${esc(top)}">${esc(top)}</b><span class="rg-share">${pct(o.byT.get(top), n)}</span>` : "Sem clientes"}</div>
+    </div>`;
+  }).join("");
 }
 
 function renderTranspBars(agg){
