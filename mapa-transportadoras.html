@@ -159,7 +159,21 @@
   .panel-header h2{font-size:14px;margin:0;font-weight:700;}
   .panel-header .count{font-size:12px;color:var(--text-secondary);}
   .tables-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;}
-  .tables-row .panel{margin-bottom:20px;}
+  .tables-row .panel{margin-bottom:20px;display:flex;flex-direction:column;}
+  .tables-row .panel-header{min-height:62px;}
+  .tables-row .table-scroll{height:440px;max-height:none;overflow-y:auto;overflow-x:hidden;}
+  table.fixed{table-layout:fixed;}
+  table.fixed td, table.fixed th{max-width:none;overflow:hidden;text-overflow:ellipsis;}
+  .ph-right{display:flex;align-items:center;gap:12px;flex:1;justify-content:flex-end;min-width:0;}
+  .ph-search{padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;background:var(--bg-1);color:#fff;font-family:'Inter',sans-serif;width:200px;max-width:100%;}
+  .ph-search::placeholder{color:var(--text-secondary);}
+  .ph-search:focus{outline:none;border-color:var(--accent-mint);}
+  /* barras de rolagem no tema */
+  *{scrollbar-width:thin;scrollbar-color:#2E7A5E transparent;}
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:#2E7A5E;border-radius:8px;}
+  ::-webkit-scrollbar-thumb:hover{background:#3FA07D;}
 
   table{width:100%;border-collapse:collapse;font-size:12.5px;}
   thead th{position:sticky;top:0;z-index:5;background:var(--bg-1);text-align:left;padding:10px 12px;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--text-secondary);border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap;user-select:none;}
@@ -375,16 +389,16 @@
       <div class="panel">
         <div class="panel-header"><h2>Transportadoras</h2><span class="count" id="countTransp"></span></div>
         <div class="table-scroll">
-          <table id="tblTransp">
+          <table id="tblTransp" class="fixed"><colgroup><col><col style="width:92px"><col style="width:62px"><col style="width:88px"><col style="width:54px"><col style="width:24%"></colgroup>
             <thead><tr><th data-key="nome">Transportadora</th><th data-key="clientes" class="num">Clientes</th><th data-key="pct" class="num">%</th><th data-key="cidades" class="num">Cidades</th><th data-key="ufs" class="num">UFs</th><th data-key="regioes">Regiões</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
       </div>
       <div class="panel">
-        <div class="panel-header"><h2>Cidades</h2><span class="count" id="countCid"></span></div>
+        <div class="panel-header"><h2>Cidades</h2><div class="ph-right"><input type="search" id="cidSearch" class="ph-search" placeholder="Filtrar cidade..." aria-label="Filtrar cidade"><span class="count" id="countCid"></span></div></div>
         <div class="table-scroll">
-          <table id="tblCid">
+          <table id="tblCid" class="fixed"><colgroup><col style="width:28%"><col style="width:50px"><col style="width:92px"><col style="width:82px"><col></colgroup>
             <thead><tr><th data-key="cidade">Cidade</th><th data-key="uf">UF</th><th data-key="clientes" class="num">Clientes</th><th data-key="nt" class="num">Transp.</th><th data-key="lista">Transportadoras (clientes)</th></tr></thead>
             <tbody></tbody>
           </table>
@@ -1010,14 +1024,15 @@ function renderTables(agg){
     : `<tr><td colspan="6" class="empty-state">Nenhuma transportadora com os filtros atuais.</td></tr>`;
   document.getElementById("countTransp").textContent = `${fmt(tr.length)} transportadoras`;
 
-  const cs = [...agg.cities.values()].map(c=>({cidade:c.cidade, uf:c.uf||"—", clientes:c.clientes, nt:c.byT.size,
+  const cq = normalize(document.getElementById("cidSearch").value);
+  const cs = [...agg.cities.values()].filter(c=>!cq || normalize(c.cidade).includes(cq)).map(c=>({cidade:c.cidade, uf:c.uf||"—", clientes:c.clientes, nt:c.byT.size,
     lista:sortedByT(c.byT).map(([t,n])=>`${t} (${n})`).join(", "), found:c.found}));
   sortRows(cs, sortState.tblCid);
   const shown = cs.slice(0, 1000);
   document.querySelector("#tblCid tbody").innerHTML = shown.length ? shown.map(r=>`
     <tr><td>${esc(r.cidade)}${r.found?"":" <span class='badge'>fora do mapa</span>"}</td><td>${esc(r.uf)}</td>
     <td class="num">${fmt(r.clientes)}</td><td class="num">${r.nt}</td><td class="muted-cell" title="${esc(r.lista)}">${esc(r.lista)}</td></tr>`).join("")
-    : `<tr><td colspan="5" class="empty-state">Nenhuma cidade com os filtros atuais.</td></tr>`;
+    : `<tr><td colspan="5" class="empty-state">${cq ? "Nenhuma cidade encontrada com esse nome." : "Nenhuma cidade com os filtros atuais."}</td></tr>`;
   document.getElementById("countCid").textContent = `${fmt(cs.length)} cidades` + (cs.length>shown.length ? ` (mostrando ${fmt(shown.length)} — use os filtros)` : "");
 }
 
@@ -1030,6 +1045,7 @@ function renderCorrections(){
 /* ---------- Interações ---------- */
 function setFilter(k, v){ filters[k] = v; render(); }
 document.getElementById("fSearch").addEventListener("input", e=>setFilter("search", e.target.value));
+document.getElementById("cidSearch").addEventListener("input", ()=>{ if(lastAgg) renderTables(lastAgg); });
 document.getElementById("fTransp").addEventListener("change", e=>setFilter("transp", e.target.value));
 function setRegiao(r){
   filters.regiao = r;
@@ -1041,6 +1057,7 @@ document.getElementById("fUf").addEventListener("change", e=>setFilter("uf", e.t
 document.getElementById("fClear").addEventListener("click", ()=>{
   Object.assign(filters,{search:"",transp:"",regiao:"",uf:""});
   document.getElementById("fSearch").value = "";
+  document.getElementById("cidSearch").value = "";
   render();
 });
 document.getElementById("regionBars").addEventListener("click", e=>{
