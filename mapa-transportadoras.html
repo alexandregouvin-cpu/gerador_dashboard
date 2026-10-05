@@ -802,7 +802,7 @@ function findCol(cols, tests){
 function fillColumnSelects(){
   const rows = readSheet();
   const cols = rows.length ? Object.keys(rows[0]).filter(c=>c!=="__hidden") : [];
-  const gT = findCol(cols, [c=>c==="NOME TRANSPORTADORA", c=>c.includes("TRANSPORTADORA") && !c.includes("CODIGO"), c=>c.includes("TRANSPORT")]);
+  const gT = findCol(cols, [c=>c==="NOME TRANSPORTADORA", c=>c.includes("TRANSPORTADORA") && !c.includes("CODIGO"), c=>c.replace(/ /g,"")==="CODIGOTRANSPORTADORA", c=>c.includes("TRANSPORT")]);
   const gC = findCol(cols, [c=>c==="ENDERECO DE COBRANCA CIDADE", c=>c.includes("CIDADE"), c=>c.includes("MUNICIPIO"), c=>c.includes("DESTINO")]);
   const gU = findCol(cols, [c=>c==="UF", c=>c==="ESTADO DO DESTINATARIO", c=>/\bUF\b/.test(c), c=>c.includes("ESTADO")]);
   sheetInfo = {
@@ -831,6 +831,14 @@ function fillColumnSelects(){
 /* ---------- Regra automática: só entram clientes destas transportadoras (código da coluna CódigoTransportadora) ---------- */
 const DEFAULT_TRANSP_CODES = ["F00141","F01357","F01785","F01844","F02800","F03089","F04527","F04628","F04958"];
 const ALLOW_KEY = "mapaTransp.codigosAutorizados";
+// Nome exibido de cada código (a planilha original traz só o código). Códigos fora desta tabela
+// têm o nome buscado na própria planilha: linha em que "Código do PN" = código → "Nome do PN".
+const TRANSP_NAMES = {
+  F00141:"RODONAVES TRANSPORTES E ENCOMENDAS", F01357:"ATIVA DISTRIBUICAO E LOGISTICA", F04958:"ATIVA DISTRIBUICAO E LOGISTICA",
+  F01785:"BRASPRESS TRANSPORTES URGENTES", F01844:"MOSCA LOGISTICA",
+  F02800:"MOVIMENTE EXPRESS COMERCIO SERVICOS LOGISTICA LOCACOES & SOLUCOES EM TRANSPORTES",
+  F03089:"TROCA TRANSPORTES", F04527:"EXPRESSO SAO MIGUEL", F04628:"EXPRESSO RIO VERMELHO TRANSPORTES"
+};
 function parseCodes(txt){ return [...new Set(String(txt||"").toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean))]; }
 function allowedCodes(){ return parseCodes(document.getElementById("allowList").value); }
 function refreshAllowInfo(){ document.getElementById("allowInfo").textContent = `${allowedCodes().length} códigos na lista · separe por vírgula ou espaço`; }
@@ -866,10 +874,20 @@ document.getElementById("btnProcess").addEventListener("click", ()=>{
     (!useCli || normalize(r[sheetInfo.codigo]).startsWith("C")) &&
     (!useTransp || allow.has(String(r[sheetInfo.codTransp]??"").trim().toUpperCase()))
   );
+  // nomes das transportadoras que também estão cadastradas na planilha como parceiros (código F…)
+  const pnName = new Map();
+  if(sheetInfo.codigo && sheetInfo.nomeCli) all.forEach(r=>{
+    const k = String(r[sheetInfo.codigo]??"").trim().toUpperCase(), n = String(r[sheetInfo.nomeCli]??"").trim();
+    if(k && n && !pnName.has(k)) pnName.set(k, n);
+  });
+  const nameIsCode = cT === sheetInfo.codTransp;
   const raw = kept.map(r=>{
-    let t = String(r[cT]??"").trim();
-    // Nome vazio ou "0" (PROCX sem resultado): usa o código da transportadora
-    if((!t || t==="0" || /^#N/.test(t)) && sheetInfo.codTransp && r[sheetInfo.codTransp]) t = String(r[sheetInfo.codTransp]).trim().toUpperCase()+" (sem nome)";
+    const code = sheetInfo.codTransp ? String(r[sheetInfo.codTransp]??"").trim().toUpperCase() : "";
+    let t = nameIsCode ? "" : String(r[cT]??"").trim();
+    if(!t || t==="0" || /^#N/.test(t) || /^=/.test(t)) t = "";
+    // ordem: tabela fixa → coluna de nome (se existir) → cadastro na própria planilha → código
+    if(code && TRANSP_NAMES[code]) t = TRANSP_NAMES[code];
+    else if(!t && code) t = pnName.get(code) || code + " (sem nome)";
     return {t, c:r[cC], u: cU ? r[cU] : "", n:1,
       k: sheetInfo.codCli ? String(r[sheetInfo.codCli]??"").trim() : "", nm: sheetInfo.nomeCli ? String(r[sheetInfo.nomeCli]??"").replace(/\s+/g," ").trim() : ""};
   }).filter(r=>r.t || String(r.c).trim());
