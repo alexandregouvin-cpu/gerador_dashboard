@@ -92,6 +92,21 @@ O script guarda uma foto dos clientes em `dados\clientes_base.tsv` e as mudança
 Se um relatório vier incompleto (menos da metade dos clientes do anterior), o
 histórico não é alterado e o log mostra um AVISO.
 
+## Fora do guia de transportadoras
+
+O botão **Fora do guia** (número vermelho) abre a aba com os clientes do mapa
+cadastrados com uma transportadora diferente da indicada no **Guia de
+Transportadoras por Estado** (cadastro SAP). O estado considerado é o da cidade
+do cliente. A aba mostra os totais, o resumo por estado e por transportadora
+cadastrada, a lista com "desde quando" (pelo histórico) e baixa um .csv.
+
+No **Histórico de mudanças**, cada cliente que entra, troca de transportadora ou
+muda de cidade fora do guia ganha a marca **⚠ Fora do guia**, e a opção
+**Só fora do guia** filtra só esses casos.
+
+O guia está gravado no próprio mapa. Se ele mudar, é preciso atualizar o
+`mapa_tv.html` (tabela `GUIA_TRANSP`).
+
 ## Conferência
 
 - No Modo TV, ao lado do botão de tela cheia, aparece "Dados de …", com a data
