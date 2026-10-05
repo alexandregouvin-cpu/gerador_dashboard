@@ -355,6 +355,48 @@
     .map-wrap.is3d #mapSvg{position:absolute;inset:0;height:100%;}
     .map-hint{display:none;}
   }
+  /* ===== Histórico de mudanças ===== */
+  .mud-btn{display:inline-flex;align-items:center;gap:8px;margin-left:auto;position:relative;z-index:1;border:1px solid var(--border);background:var(--bg-2);color:var(--text-primary);
+    font:700 13px 'Montserrat',sans-serif;padding:9px 16px;border-radius:999px;cursor:pointer;}
+  .mud-btn:hover{border-color:var(--accent-mint);}
+  .mud-btn[hidden]{display:none;}
+  .mud-badge{background:var(--accent-mint);color:#02301C;border-radius:999px;padding:1px 8px;font-size:12px;font-weight:800;}
+  body.mode-tv .mud-btn{margin-left:0;font-size:15px;padding:9px 18px;}
+  .mud-panel{position:fixed;inset:0;z-index:9500;overflow:auto;background:var(--bg-0);color:var(--text-primary);}
+  .mud-panel[hidden]{display:none;}
+  .mud-inner{max-width:1400px;margin:0 auto;padding:24px 32px 48px;}
+  .mud-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+  .mud-top h2{margin:0;font-size:24px;color:var(--accent-mint);text-transform:uppercase;letter-spacing:.03em;}
+  .mud-sub{margin:6px 0 0;color:var(--text-secondary);font-size:13.5px;}
+  .mud-close{border:1px solid var(--border);background:var(--bg-2);color:var(--text-primary);width:40px;height:40px;border-radius:10px;font-size:18px;cursor:pointer;flex:0 0 auto;}
+  .mud-filters{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin:20px 0 16px;}
+  .mud-filters label{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--label);}
+  .mud-filters label.grow{flex:1;min-width:220px;}
+  .mud-filters select,.mud-filters input{background:var(--bg-2);color:var(--text-primary);border:1px solid var(--border);border-radius:9px;padding:9px 11px;font:600 13px 'Montserrat',sans-serif;min-width:200px;}
+  .mud-csv{border:0;background:var(--btn);color:#fff;font:700 13px 'Montserrat',sans-serif;padding:10px 16px;border-radius:9px;cursor:pointer;}
+  .mud-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:20px;}
+  .mud-kpi{text-align:left;background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;color:var(--text-primary);cursor:pointer;font-family:'Montserrat',sans-serif;}
+  .mud-kpi .k-lbl{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--label);}
+  .mud-kpi .k-val{display:block;font-size:32px;font-weight:800;margin-top:6px;}
+  .mud-kpi.off{opacity:.38;}
+  .mud-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 auto;}
+  .t-entrou{--c:#00D26A;} .t-saiu{--c:#FF6B6B;} .t-trocou{--c:#FAEB0A;} .t-cidade{--c:#7CC7FF;} .t-atencao{--c:#FFB454;}
+  .mud-dot{background:var(--c);}
+  .mud-evento{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;overflow:hidden;}
+  .mud-ev-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;padding:14px 18px;border-bottom:1px solid var(--border);}
+  .mud-ev-head b{font-size:16px;}
+  .mud-ev-head .arq{color:var(--text-secondary);font-size:12.5px;}
+  .mud-ev-head .chips{margin-left:auto;display:flex;gap:12px;font-size:12.5px;font-weight:700;}
+  .mud-ev-head .chips span{display:inline-flex;align-items:center;gap:5px;}
+  .mud-tab{width:100%;border-collapse:collapse;font-size:13px;}
+  .mud-tab th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--label);padding:9px 14px;font-weight:800;}
+  .mud-tab td{padding:9px 14px;border-top:1px solid rgba(10,108,70,.55);vertical-align:top;}
+  .mud-tab td.cod{font-weight:700;white-space:nowrap;}
+  .mud-tab td.det{color:var(--text-secondary);}
+  .mud-tipo{display:inline-flex;align-items:center;gap:6px;font-weight:700;white-space:nowrap;}
+  .mud-vazio{padding:16px 18px;color:var(--text-secondary);font-size:13.5px;}
+  @media (max-width:900px){ .mud-kpis{grid-template-columns:repeat(2,minmax(0,1fr));} .mud-inner{padding:16px;} .mud-tab th:nth-child(4),.mud-tab td:nth-child(4){display:none;} }
+
   /* ===== Modo TV: tela única 1920×1080, sem rolagem, escalada para caber em qualquer TV (Full HD ou 4K) ===== */
   .tv-meta{display:none;}
   body.mode-tv{overflow:hidden;}
@@ -452,6 +494,7 @@
     </div>
   </div>
   <div class="tv-meta" id="tvMeta"><span id="tvStamp"></span><button type="button" id="tvFull" class="tv-full" title="Tela cheia">⛶ Tela cheia</button></div>
+  <button type="button" class="mud-btn" id="btnMud" hidden title="Histórico de mudanças entre os relatórios">Mudanças <span class="mud-badge" id="mudBadge" hidden></span></button>
   <div class="mode-toggle" id="modeToggle">
     <button data-mode="individual" class="active">Modo Individual</button>
     <button data-mode="tv">Modo TV</button>
@@ -576,6 +619,30 @@
     </div>
   </div>
 </main>
+<section class="mud-panel" id="mudPanel" hidden aria-label="Histórico de mudanças">
+  <div class="mud-inner">
+    <div class="mud-top">
+      <div>
+        <h2>Histórico de mudanças</h2>
+        <p class="mud-sub">Cada relatório novo é comparado com o anterior. As regras são as mesmas do mapa: ativos, clientes "C" e transportadoras autorizadas.</p>
+      </div>
+      <button type="button" class="mud-close" id="mudClose" aria-label="Fechar">✕</button>
+    </div>
+    <div class="mud-filters">
+      <label>Período<select id="mudPeriodo">
+        <option value="ultima">Última atualização</option>
+        <option value="30">Últimos 30 dias</option>
+        <option value="90">Últimos 90 dias</option>
+        <option value="tudo" selected>Todo o histórico</option>
+      </select></label>
+      <label>Transportadora<select id="mudTransp"></select></label>
+      <label class="grow">Buscar<input type="text" id="mudBusca" placeholder="Código, cliente ou cidade..."></label>
+      <button type="button" class="mud-csv" id="mudCsv">Baixar planilha (.csv)</button>
+    </div>
+    <div class="mud-kpis" id="mudKpis"></div>
+    <div id="mudLista"></div>
+  </div>
+</section>
 <footer id="footerInfo">Apis Flora · Base de municípios: IBGE</footer>
 </div>
 <div class="tooltip-overlay" id="tooltip"></div>
@@ -841,6 +908,7 @@ function fillColumnSelects(){
   document.getElementById("ruleHiddenInfo").textContent = `(ignora ${fmt(sheetInfo.hidden)} linhas ocultas pelo filtro do Excel)`;
   document.getElementById("rulesBox").classList.toggle("show", !!(sheetInfo.ativo || sheetInfo.codigo || sheetInfo.codTransp || sheetInfo.hidden));
 }
+const PN_NOMES = new Map();   // código do PN -> nome (inclui as transportadoras "F…" cadastradas na planilha)
 /* ---------- Regra automática: só entram clientes destas transportadoras (código da coluna CódigoTransportadora) ---------- */
 const DEFAULT_TRANSP_CODES = ["F00141","F01357","F01785","F01844","F02800","F03089","F04527","F04628","F04958"];
 const ALLOW_KEY = "mapaTransp.codigosAutorizados";
@@ -860,7 +928,7 @@ function refreshAllowInfo(){ document.getElementById("allowInfo").textContent = 
   try{ saved = localStorage.getItem(ALLOW_KEY); }catch(_){}
   const ta = document.getElementById("allowList");
   ta.value = (saved && parseCodes(saved).length ? parseCodes(saved) : DEFAULT_TRANSP_CODES).join(", ");
-  ta.addEventListener("input", ()=>{ refreshAllowInfo(); try{ localStorage.setItem(ALLOW_KEY, allowedCodes().join(",")); }catch(_){} });
+  ta.addEventListener("input", ()=>{ refreshAllowInfo(); if(typeof HISTORICO!=="undefined" && HISTORICO.length) atualizarBotaoMud(); try{ localStorage.setItem(ALLOW_KEY, allowedCodes().join(",")); }catch(_){} });
   ta.addEventListener("blur", ()=>{ ta.value = allowedCodes().join(", "); });
   document.getElementById("allowReset").addEventListener("click", ()=>{
     ta.value = DEFAULT_TRANSP_CODES.join(", "); refreshAllowInfo();
@@ -889,7 +957,7 @@ function processarPlanilha(dataDados){
     (!useTransp || allow.has(String(r[sheetInfo.codTransp]??"").trim().toUpperCase()))
   );
   // nomes das transportadoras que também estão cadastradas na planilha como parceiros (código F…)
-  const pnName = new Map();
+  const pnName = PN_NOMES; pnName.clear();
   if(sheetInfo.codigo && sheetInfo.nomeCli) all.forEach(r=>{
     const k = String(r[sheetInfo.codigo]??"").trim().toUpperCase(), n = String(r[sheetInfo.nomeCli]??"").trim();
     if(k && n && !pnName.has(k)) pnName.set(k, n);
@@ -1727,6 +1795,119 @@ if(EMBEDDED){
   initDashboard();
 }
 /* =========================================================
+   HISTÓRICO DE MUDANÇAS
+   O script grava dados/historico.js com um evento por relatório novo: os
+   clientes "C" que mudaram (antes/depois: ativo, transportadora, cidade, UF).
+   Aqui cada mudança é classificada com as regras atuais do mapa.
+   ========================================================= */
+let HISTORICO = [];
+const mudFiltro = {tipos:new Set(["entrou","saiu","trocou","cidade","atencao"])};
+const MUD_TIPOS = {
+  entrou:{rot:"Entraram", um:"Entrou"}, saiu:{rot:"Saíram", um:"Saiu"}, trocou:{rot:"Trocaram de transportadora", um:"Trocou de transportadora"},
+  cidade:{rot:"Mudaram de cidade", um:"Mudou de cidade"}, atencao:{rot:"Atenção: fora do mapa", um:"Atenção"}
+};
+function nomeTransp(cod){
+  if(!cod) return "(sem transportadora)";
+  return TRANSP_NAMES[cod] || (PN_NOMES.has(cod) ? cleanName(PN_NOMES.get(cod)) : cod);
+}
+function classificarMudanca(m, allow){
+  const a = m.a, d = m.d;
+  const ok = s=> !!s && s[0]==="Y" && allow.has(s[1]);
+  const inA = ok(a), inD = ok(d), cid = s=> s ? `${s[2]}${s[3] ? "/"+s[3] : ""}` : "";
+  if(inD && !inA) return {tipo:"entrou", transp:nomeTransp(d[1]), cidade:cid(d),
+    det: !a ? "Cliente novo" : a[0]!=="Y" ? "Cliente reativado" : `Antes com ${nomeTransp(a[1])}, fora da lista`};
+  if(inA && !inD) return {tipo:"saiu", transp:nomeTransp(a[1]), cidade:cid(a),
+    det: !d ? "Removido do cadastro" : d[0]!=="Y" ? "Cliente inativado" : !d[1] ? "Ficou sem transportadora" : `Passou para ${nomeTransp(d[1])}, fora da lista`};
+  if(inA && inD){
+    if(a[1]!==d[1] && nomeTransp(a[1])!==nomeTransp(d[1])) return {tipo:"trocou", transp:`${nomeTransp(a[1])} → ${nomeTransp(d[1])}`, cidade:cid(d), det:"", tA:nomeTransp(a[1]), tD:nomeTransp(d[1])};
+    if(normalize(a[2])!==normalize(d[2]) || a[3]!==d[3]) return {tipo:"cidade", transp:nomeTransp(d[1]), cidade:cid(d), det:`Antes: ${cid(a)}`};
+    return null;
+  }
+  if(d && d[0]==="Y" && (!a || a[0]!=="Y")) return {tipo:"atencao", transp:nomeTransp(d[1]), cidade:cid(d),
+    det: d[1] ? "Cliente ativo com transportadora fora da lista: não aparece no mapa" : "Cliente ativo sem transportadora cadastrada: não aparece no mapa"};
+  return null;
+}
+function eventosClassificados(){
+  const allow = new Set(allowedCodes());
+  return HISTORICO.map(ev=>{
+    const itens = (ev.mudancas||[]).map(m=>{ const c = classificarMudanca(m, allow); return c ? {...c, cod:m.c, nome:m.n} : null; }).filter(Boolean);
+    return {...ev, data:new Date(ev.relatorioEm), itens};
+  }).sort((x,y)=>y.data-x.data);
+}
+function contarTipos(itens){ const n = {entrou:0,saiu:0,trocou:0,cidade:0,atencao:0}; itens.forEach(i=>n[i.tipo]++); return n; }
+function atualizarBotaoMud(){
+  const btn = document.getElementById("btnMud"), badge = document.getElementById("mudBadge");
+  btn.hidden = !HISTORICO.length;
+  const ult = eventosClassificados().find(e=>!e.base);
+  const n = ult ? ult.itens.length : 0;
+  badge.hidden = !n; badge.textContent = n;
+  btn.title = ult ? `Última atualização com mudanças: ${ult.data.toLocaleDateString("pt-BR")} · ${n} cliente(s)` : "Histórico de mudanças entre os relatórios";
+  if(!document.getElementById("mudPanel").hidden) renderMud();
+}
+function mudEventosFiltrados(){
+  const per = document.getElementById("mudPeriodo").value, tr = document.getElementById("mudTransp").value;
+  const q = normalize(document.getElementById("mudBusca").value);
+  let evs = eventosClassificados();
+  if(per==="ultima"){ const u = evs.find(e=>!e.base && e.itens.length); evs = u ? [u] : []; }
+  else if(per!=="tudo"){ const lim = Date.now() - Number(per)*86400000; evs = evs.filter(e=>e.data.getTime() >= lim); }
+  return evs.map(e=>({...e, todos:e.itens, itens:e.itens.filter(i=>
+    (!tr || i.transp===tr || i.tA===tr || i.tD===tr) &&
+    (!q || normalize(`${i.cod} ${i.nome} ${i.cidade}`).includes(q)))}));
+}
+function renderMud(){
+  // lista de transportadoras presentes no histórico
+  const selT = document.getElementById("mudTransp"), atual = selT.value;
+  const nomes = new Set(); eventosClassificados().forEach(e=>e.itens.forEach(i=>{ if(i.tA){ nomes.add(i.tA); nomes.add(i.tD); } else nomes.add(i.transp); }));
+  selT.innerHTML = `<option value="">Todas</option>` + [...nomes].sort().map(n=>`<option ${n===atual?"selected":""}>${esc(n)}</option>`).join("");
+  const evs = mudEventosFiltrados();
+  const tot = contarTipos(evs.flatMap(e=>e.itens));
+  document.getElementById("mudKpis").innerHTML = Object.entries(MUD_TIPOS).map(([k,t])=>
+    `<button type="button" class="mud-kpi t-${k} ${mudFiltro.tipos.has(k)?"":"off"}" data-tipo="${k}" aria-pressed="${mudFiltro.tipos.has(k)}">
+       <span class="k-lbl"><i class="mud-dot"></i>${t.rot}</span><span class="k-val">${fmt(tot[k])}</span></button>`).join("");
+  const html = evs.map(e=>{
+    const ordem = Object.keys(MUD_TIPOS);
+    const itens = e.itens.filter(i=>mudFiltro.tipos.has(i.tipo)).sort((x,y)=>ordem.indexOf(x.tipo)-ordem.indexOf(y.tipo) || x.nome.localeCompare(y.nome,"pt-BR"));
+    const n = contarTipos(e.todos);
+    const quando = e.data.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"});
+    if(e.base) return `<div class="mud-evento"><div class="mud-ev-head"><b>${quando}</b><span class="arq">${esc(e.arquivo||"")}</span></div>
+      <div class="mud-vazio">Início do histórico: ${fmt(e.clientes||0)} clientes "C" registrados como ponto de partida. As mudanças aparecem a partir do próximo relatório.</div></div>`;
+    const chips = Object.keys(MUD_TIPOS).filter(k=>n[k]).map(k=>`<span class="t-${k}"><i class="mud-dot"></i>${n[k]} ${MUD_TIPOS[k].rot.toLowerCase()}</span>`).join("");
+    const linhas = itens.map(i=>`<tr><td><span class="mud-tipo t-${i.tipo}"><i class="mud-dot"></i>${MUD_TIPOS[i.tipo].um}</span></td>
+      <td class="cod">${esc(i.cod)}</td><td title="${esc(i.nome)}">${esc(i.nome)}</td><td>${esc(i.cidade)}</td><td title="${esc(i.transp)}">${esc(i.transp)}</td><td class="det" title="${esc(i.det)}">${esc(i.det)}</td></tr>`).join("");
+    return `<div class="mud-evento"><div class="mud-ev-head"><b>${quando}</b><span class="arq">${esc(e.arquivo||"")} · ${fmt(e.clientes||0)} clientes "C"</span><span class="chips">${chips || "sem mudanças no mapa"}</span></div>
+      ${linhas ? `<table class="mud-tab"><thead><tr><th>Tipo</th><th>Código</th><th>Cliente</th><th>Cidade</th><th>Transportadora</th><th>Detalhe</th></tr></thead><tbody>${linhas}</tbody></table>`
+               : `<div class="mud-vazio">Nenhuma mudança com os filtros escolhidos.</div>`}</div>`;
+  }).join("");
+  document.getElementById("mudLista").innerHTML = html || `<div class="mud-evento"><div class="mud-vazio">Nenhuma atualização no período escolhido.</div></div>`;
+}
+function abrirMud(){ document.getElementById("mudPanel").hidden = false; document.body.style.overflow = "hidden"; renderMud(); }
+function fecharMud(){ document.getElementById("mudPanel").hidden = true; document.body.style.overflow = ""; }
+document.getElementById("btnMud").addEventListener("click", abrirMud);
+document.getElementById("mudClose").addEventListener("click", fecharMud);
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !document.getElementById("mudPanel").hidden) fecharMud(); });
+["mudPeriodo","mudTransp"].forEach(id=>document.getElementById(id).addEventListener("change", renderMud));
+document.getElementById("mudBusca").addEventListener("input", renderMud);
+document.getElementById("mudKpis").addEventListener("click", e=>{
+  const b = e.target.closest("[data-tipo]"); if(!b) return;
+  const k = b.dataset.tipo;
+  // clique isola o tipo; clicar de novo no único tipo ativo volta a mostrar todos
+  if(mudFiltro.tipos.size===1 && mudFiltro.tipos.has(k)) Object.keys(MUD_TIPOS).forEach(t=>mudFiltro.tipos.add(t));
+  else { mudFiltro.tipos.clear(); mudFiltro.tipos.add(k); }
+  renderMud();
+});
+document.getElementById("mudCsv").addEventListener("click", ()=>{
+  const lin = [["Data do relatório","Tipo","Código","Cliente","Cidade","Transportadora","Detalhe","Arquivo"]];
+  mudEventosFiltrados().forEach(e=>e.itens.filter(i=>mudFiltro.tipos.has(i.tipo)).forEach(i=>
+    lin.push([e.data.toLocaleString("pt-BR"), MUD_TIPOS[i.tipo].um, i.cod, i.nome, i.cidade, i.transp, i.det, e.arquivo||""])));
+  const csv = "\ufeff" + lin.map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(";")).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8"}));
+  a.download = `mudancas-clientes-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+});
+if(window.claude) document.getElementById("mudCsv").hidden = true;
+
+/* =========================================================
    DADOS DA PASTA (SharePoint/OneDrive sincronizado)
    O script automacao/atualizar_dados_mapa.ps1 grava dados/mapa_dados.js
    (o relatório "Lista de Parceiros" em base64) ao lado desta página.
@@ -1751,6 +1932,9 @@ function lerDadosPasta(){
       if(!temDados) return;                         // sem arquivo de dados: segue com o upload manual
       const d = window.MAPA_DADOS; window.MAPA_DADOS = null;
       aplicarDadosPasta(d);
+      carregarScriptPasta("dados/historico.js", temHist=>{
+        if(temHist && Array.isArray(window.MAPA_HISTORICO)){ HISTORICO = window.MAPA_HISTORICO; window.MAPA_HISTORICO = null; atualizarBotaoMud(); }
+      });
     });
   });
 }

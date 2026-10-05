@@ -72,6 +72,26 @@ aba comum em vez da tela cheia.
 O computador da TV precisa de internet: o mapa baixa o leitor de Excel, o 3D e
 as fontes da web.
 
+## Histórico de mudanças
+
+O botão **Mudanças**, no alto do mapa, abre um painel separado com tudo o que
+mudou de um relatório para o outro, por data:
+
+- **Entraram**: cliente novo, reativado ou que passou para uma transportadora autorizada.
+- **Saíram**: cliente removido, inativado ou que passou para uma transportadora fora da lista.
+- **Trocaram de transportadora**: antes e depois.
+- **Mudaram de cidade**: cidade/UF anterior e atual.
+- **Atenção**: cliente ativo novo que não aparece no mapa (sem transportadora ou com
+  transportadora fora da lista).
+
+O número verde no botão mostra quantos clientes mudaram na última atualização.
+O painel tem filtros por período, transportadora e busca, e baixa a lista em .csv.
+
+O script guarda uma foto dos clientes em `dados\clientes_base.tsv` e as mudanças em
+`dados\historico.js`. Não apague esses arquivos: sem eles o histórico recomeça do zero.
+Se um relatório vier incompleto (menos da metade dos clientes do anterior), o
+histórico não é alterado e o log mostra um AVISO.
+
 ## Conferência
 
 - No Modo TV, ao lado do botão de tela cheia, aparece "Dados de …", com a data
