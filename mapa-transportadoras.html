@@ -480,7 +480,7 @@
         <div class="rules-title">Filtros fixos aplicados na planilha</div>
         <label id="ruleAtivoWrap"><input type="checkbox" id="ruleAtivo" checked> <span>Somente ativos <small>(coluna "Ativo" = Y)</small></span></label>
         <label id="ruleClienteWrap"><input type="checkbox" id="ruleCliente" checked> <span>Somente clientes <small>("Código do PN" começando com C)</small></span></label>
-        <label id="ruleTranspWrap"><input type="checkbox" id="ruleTransp" checked> <span>Somente transportadoras autorizadas <small>(coluna "CódigoTransportadora" — não precisa filtrar a planilha)</small></span></label>
+        <label id="ruleTranspWrap"><input type="checkbox" id="ruleTransp" checked> <span>Somente transportadoras autorizadas <small>(pelo código da transportadora — não precisa filtrar a planilha) <span id="ruleTranspCol"></span></small></span></label>
         <div class="allow" id="allowBox">
           <textarea id="allowList" spellcheck="false" aria-label="Códigos das transportadoras autorizadas"></textarea>
           <div class="allow-actions"><span id="allowInfo"></span><button type="button" id="allowReset">Restaurar lista padrão</button></div>
@@ -799,6 +799,16 @@ function findCol(cols, tests){
   for(const t of tests){ const c = cols.find(c=>t(normalize(c))); if(c) return c; }
   return "";
 }
+// coluna com o código da transportadora: pelo nome ("CódigoTransportadora") ou, se o relatório vier com
+// outro título (ex.: "Transportadora"), pelo conteúdo — a maioria dos valores no formato F00141
+function findTranspCodeCol(cols, rows){
+  const byName = findCol(cols, [c=>c.replace(/ /g,"")==="CODIGOTRANSPORTADORA"]);
+  if(byName) return byName;
+  return cols.filter(c=>normalize(c).includes("TRANSPORT")).find(c=>{
+    const v = rows.map(r=>String(r[c]??"").trim()).filter(Boolean).slice(0, 3000);
+    return v.length && v.filter(x=>/^[A-Z]\d{4,}$/i.test(x)).length >= v.length*0.8;
+  }) || "";
+}
 function fillColumnSelects(){
   const rows = readSheet();
   const cols = rows.length ? Object.keys(rows[0]).filter(c=>c!=="__hidden") : [];
@@ -808,7 +818,7 @@ function fillColumnSelects(){
   sheetInfo = {
     ativo: findCol(cols, [c=>c==="ATIVO"]),
     codigo: findCol(cols, [c=>c==="CODIGO DO PN"]),
-    codTransp: findCol(cols, [c=>c.replace(/ /g,"")==="CODIGOTRANSPORTADORA"]),
+    codTransp: findTranspCodeCol(cols, rows),
     nomeCli: findCol(cols, [c=>c==="NOME DO PN", c=>c==="CLIENTE", c=>c==="NOME DO CLIENTE", c=>c==="RAZAO SOCIAL"]),
     codCli: findCol(cols, [c=>c==="CODIGO DO PN", c=>c==="CODIGO DO CLIENTE", c=>c==="COD CLIENTE"]),
     hidden: rows.filter(r=>r.__hidden).length,
@@ -824,6 +834,7 @@ function fillColumnSelects(){
   document.getElementById("ruleClienteWrap").classList.toggle("hide", !sheetInfo.codigo);
   document.getElementById("ruleTranspWrap").classList.toggle("hide", !sheetInfo.codTransp);
   document.getElementById("allowBox").classList.toggle("hide", !sheetInfo.codTransp);
+  document.getElementById("ruleTranspCol").textContent = sheetInfo.codTransp ? `· coluna "${sheetInfo.codTransp}"` : "";
   document.getElementById("ruleHiddenWrap").classList.toggle("hide", !sheetInfo.hidden);
   document.getElementById("ruleHiddenInfo").textContent = `(ignora ${fmt(sheetInfo.hidden)} linhas ocultas pelo filtro do Excel)`;
   document.getElementById("rulesBox").classList.toggle("show", !!(sheetInfo.ativo || sheetInfo.codigo || sheetInfo.codTransp || sheetInfo.hidden));
