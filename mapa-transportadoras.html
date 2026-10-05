@@ -366,6 +366,8 @@
   body.mode-tv .brand .titles p{font-size:15px;}
   body.mode-tv .tv-meta{display:flex;align-items:center;gap:16px;margin-left:auto;position:relative;z-index:1;}
   body.mode-tv #tvStamp{font-size:15px;color:var(--text-secondary);font-weight:600;}
+  body.mode-tv #tvStamp.stamp-aviso{color:#FFD166 !important;}
+  body.mode-tv #tvStamp{white-space:nowrap;}
   .tv-full{border:1px solid rgba(0,210,106,0.35);background:transparent;color:var(--accent-mint);font:700 14px 'Montserrat',sans-serif;padding:9px 14px;border-radius:10px;cursor:pointer;}
   body.mode-tv .mode-toggle button{font-size:15px;padding:9px 20px;}
   body.mode-tv main{flex:1;min-height:0;display:flex;flex-direction:column;padding:18px 32px 22px !important;max-width:none;width:100%;margin:0;}
@@ -867,17 +869,18 @@ function refreshAllowInfo(){ document.getElementById("allowInfo").textContent = 
   document.getElementById("ruleTransp").addEventListener("change", e=>{ document.getElementById("allowBox").style.display = e.target.checked ? "" : "none"; });
   refreshAllowInfo();
 })();
-document.getElementById("btnProcess").addEventListener("click", ()=>{
+document.getElementById("btnProcess").addEventListener("click", ()=>processarPlanilha());
+function processarPlanilha(dataDados){
   const cT = document.getElementById("mapTransp").value;
   const cC = document.getElementById("mapCidade").value;
   const cU = document.getElementById("mapUf").value;
-  if(!cT || !cC){ setStatus("Escolha as colunas de Transportadora e Cidade.", "error"); return; }
+  if(!cT || !cC){ setStatus("Escolha as colunas de Transportadora e Cidade.", "error"); return false; }
   const useAtivo = sheetInfo.ativo && document.getElementById("ruleAtivo").checked;
   const useCli = sheetInfo.codigo && document.getElementById("ruleCliente").checked;
   const useHidden = sheetInfo.hidden && document.getElementById("ruleHidden").checked;
   const allow = new Set(allowedCodes());
   const useTransp = sheetInfo.codTransp && document.getElementById("ruleTransp").checked;
-  if(useTransp && !allow.size){ setStatus("A lista de transportadoras autorizadas está vazia.", "error"); return; }
+  if(useTransp && !allow.size){ setStatus("A lista de transportadoras autorizadas está vazia.", "error"); return false; }
   const all = readSheet();
   const kept = all.filter(r=>
     (!useHidden || !r.__hidden) &&
@@ -902,17 +905,22 @@ document.getElementById("btnProcess").addEventListener("click", ()=>{
     return {t, c:r[cC], u: cU ? r[cU] : "", n:1,
       k: sheetInfo.codCli ? String(r[sheetInfo.codCli]??"").trim() : "", nm: sheetInfo.nomeCli ? String(r[sheetInfo.nomeCli]??"").replace(/\s+/g," ").trim() : ""};
   }).filter(r=>r.t || String(r.c).trim());
-  if(!raw.length){ setStatus("Nenhuma linha sobrou depois dos filtros.", "error"); return; }
+  if(!raw.length){ setStatus("Nenhuma linha sobrou depois dos filtros.", "error"); return false; }
   RECORDS = buildRecords(raw);
-  GENERATED_AT = new Date();
+  GENERATED_AT = dataDados || new Date();
   NOTE = [useAtivo && "Ativo = Y", useCli && "código do PN começa com C", useTransp && `${allow.size} transportadoras autorizadas`, useHidden && "filtro da planilha"].filter(Boolean).join(" · ");
   const nfClientes = RECORDS.filter(r=>!r.found).reduce((s,r)=>s+r.n,0);
   setStatus(`${fmt(raw.length)} clientes considerados de ${fmt(all.length)} linhas da planilha` +
     (NOTE ? ` (filtros: ${esc(NOTE)})` : "") +
     (CORRECTIONS.length ? ` · ${fmt(CORRECTIONS.reduce((s,c)=>s+c.n,0))} com nome de cidade corrigido automaticamente` : "") +
     (nfClientes ? ` · ${fmt(nfClientes)} com cidade fora do Brasil ou não localizada (contam nos totais, mas não aparecem no mapa).` : "."), nfClientes ? "warn" : "");
+  // a cada atualização os filtros voltam para "todos" (as listas de opções são refeitas)
+  filters.search = filters.transp = filters.regiao = filters.uf = "";
+  const busca = document.getElementById("fSearch"); if(busca) busca.value = "";
   initDashboard();
-});
+  if(document.body.classList.contains("mode-tv")) atualizarCarimboTV();
+  return true;
+}
 
 /* ---------- Dashboard ---------- */
 function initDashboard(){
@@ -1651,6 +1659,14 @@ document.querySelector("#tblTransp tbody").addEventListener("click", e=>{
     if(lastAgg) renderTables(lastAgg);
   }));
 });
+function atualizarCarimboTV(){
+  const el = document.getElementById("tvStamp");
+  if(!GENERATED_AT){ el.textContent = ""; return; }
+  const dias = (Date.now() - GENERATED_AT.getTime()) / 86400000;
+  el.textContent = "Dados de " + GENERATED_AT.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}) +
+    (dias > 8 ? " · ⚠ desatualizado" : "");
+  el.classList.toggle("stamp-aviso", dias > 8);
+}
 /* ---------- Modo TV: a tela é desenhada em 1920×1080 e escalada para caber inteira em qualquer TV/monitor ---------- */
 const STAGE_W = 1920, STAGE_H = 1080;
 window.__stageScale = 1;
@@ -1669,7 +1685,7 @@ function setMode(mode){
   document.body.classList.toggle("mode-tv", tv);
   document.body.classList.toggle("mode-individual", !tv);
   Map3D.setAutoRotate(tv ? true : Map3D.userRotate);
-  document.getElementById("tvStamp").textContent = GENERATED_AT ? "Dados de " + GENERATED_AT.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}) : "";
+  atualizarCarimboTV();
   try{ history.replaceState(null, "", tv ? "#tv" : location.pathname + location.search); }catch(_){}
   window.scrollTo(0,0);
   fitStage();
@@ -1710,7 +1726,57 @@ if(EMBEDDED){
   RECORDS = buildRecords(EMBEDDED.rows);
   initDashboard();
 }
-if(location.hash === "#tv") setMode("tv");
+/* =========================================================
+   DADOS DA PASTA (SharePoint/OneDrive sincronizado)
+   O script automacao/atualizar_dados_mapa.ps1 grava dados/mapa_dados.js
+   (o relatório "Lista de Parceiros" em base64) ao lado desta página.
+   A página lê esse arquivo ao abrir e confere a cada 5 minutos se há
+   versão nova; quando há, aplica as mesmas regras do botão "Gerar mapa".
+   ========================================================= */
+const PASTA_ARQUIVO_DADOS = "dados/mapa_dados.js";
+const PASTA_ARQUIVO_VERSAO = "dados/versao.js";   // arquivo pequeno: só diz quando os dados foram gerados
+const PASTA_INTERVALO_MS = 5*60*1000;
+let pastaUltimaGeracao = null;
+function carregarScriptPasta(caminho, aoTerminar){
+  const sc = document.createElement("script");
+  sc.src = caminho + "?v=" + Date.now();          // evita pegar a versão antiga do cache
+  sc.onload = ()=>{ sc.remove(); aoTerminar(true); };
+  sc.onerror = ()=>{ sc.remove(); aoTerminar(false); };
+  document.head.appendChild(sc);
+}
+function lerDadosPasta(){
+  carregarScriptPasta(PASTA_ARQUIVO_VERSAO, temVersao=>{
+    if(temVersao && window.MAPA_VERSAO && window.MAPA_VERSAO === pastaUltimaGeracao) return;   // nada novo
+    carregarScriptPasta(PASTA_ARQUIVO_DADOS, temDados=>{
+      if(!temDados) return;                         // sem arquivo de dados: segue com o upload manual
+      const d = window.MAPA_DADOS; window.MAPA_DADOS = null;
+      aplicarDadosPasta(d);
+    });
+  });
+}
+function aplicarDadosPasta(d){
+  if(!d || !d.geradoEm || !d.conteudo || d.geradoEm === pastaUltimaGeracao) return;
+  if(typeof XLSX === "undefined") return;           // leitor de Excel ainda não carregou: tenta no próximo ciclo
+  try{
+    workbook = XLSX.read(d.conteudo, {type:"base64", cellStyles:true});
+    document.getElementById("mapSheet").innerHTML = workbook.SheetNames.map(n=>`<option>${esc(n)}</option>`).join("");
+    fillColumnSelects();
+    document.getElementById("mappingRow").classList.remove("hide");
+    document.getElementById("fileName").textContent = d.arquivo || "relatório";
+    document.getElementById("uploadSlot").classList.add("has-file");
+    const dataRel = new Date(d.relatorioEm || d.geradoEm);
+    if(!processarPlanilha(dataRel)) return;
+    pastaUltimaGeracao = d.geradoEm;
+    document.getElementById("footerInfo").textContent =
+      `Fonte: ${d.arquivo || "relatório"} · relatório salvo em ${dataRel.toLocaleString("pt-BR")} · atualiza sozinho` + (NOTE ? ` · Filtros: ${NOTE}` : "") + ` · Apis Flora · Base de municípios: IBGE`;
+  }catch(err){ console.error("Falha ao ler os dados da pasta:", err); }
+}
+if(!EMBEDDED && !window.claude){                    // HTML com dados embutidos ou link do claude.ai: não usa a pasta
+  lerDadosPasta();
+  setInterval(lerDadosPasta, PASTA_INTERVALO_MS);
+  setInterval(()=>{ if(document.body.classList.contains("mode-tv")) atualizarCarimboTV(); }, 60*60*1000);
+}
+if(/(^|[#&])tv\b/i.test(location.hash.slice(1))) setMode("tv");
 </script>
 </body>
 </html>
