@@ -360,37 +360,20 @@
     font:700 13px 'Montserrat',sans-serif;padding:9px 16px;border-radius:999px;cursor:pointer;}
   .mud-btn:hover{border-color:var(--accent-mint);}
   .mud-btn[hidden]{display:none;}
-  .mud-badge.red{background:#FF5A5F;color:#fff;}
-  .mud-badge:empty{display:none;}
-  .mud-tabs{display:inline-flex;gap:4px;margin-top:12px;border:1px solid var(--border);border-radius:999px;padding:3px;}
-  .mud-tabs button{border:0;background:transparent;color:var(--text-secondary);font:700 13px 'Montserrat',sans-serif;padding:8px 16px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
-  .mud-tabs button.on{background:var(--btn);color:#fff;}
-  #abaMud > .mud-sub, #abaGuia > .mud-sub{margin-top:14px;}
-  .guia-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}
-  .guia-kpi{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
-  .guia-kpi .k-lbl{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--label);}
-  .guia-kpi .k-val{display:block;font-size:32px;font-weight:800;margin-top:6px;}
-  .guia-kpi .k-sub{display:block;font-size:12px;color:var(--text-secondary);margin-top:2px;}
   .guia-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,90,95,.14);border:1px solid rgba(255,90,95,.55);color:#FFD2D3;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:700;white-space:nowrap;}
-  .guia-ok{color:var(--text-secondary);}
-  .guia-ref{margin-top:16px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:12px 18px;}
-  .guia-ref summary{cursor:pointer;font-weight:700;color:var(--label);font-size:13px;}
-  .guia-ref table{margin-top:10px;}
-  .guia-nota{font-size:12.5px;color:var(--text-secondary);margin:10px 0 2px;}
-  .mud-filters label.mud-only{flex-direction:row;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:13px;font-weight:700;color:var(--text-primary);cursor:pointer;
-    align-self:flex-end;height:40px;padding:0 12px;border:1px solid rgba(255,90,95,.55);border-radius:9px;background:rgba(255,90,95,.08);}
-  .mud-filters label.mud-only input{accent-color:#FF5A5F;width:16px;height:16px;min-width:0;padding:0;margin:0;}
-  @media (max-width:900px){ .guia-kpis{grid-template-columns:repeat(2,minmax(0,1fr));} }
+  .mud-tab tr.row-guia td{background:rgba(255,90,95,.08);}
+  .mud-tab tr.row-guia td:first-child{box-shadow:inset 3px 0 0 #FF5A5F;}
+  .mud-tab tr.row-guia td.det{white-space:normal;}
+  .mud-tab tr.row-guia .guia-pill{margin-bottom:4px;white-space:normal;}
+  .guia-alerta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:rgba(255,90,95,.10);border:1px solid rgba(255,90,95,.6);border-radius:12px;padding:12px 16px;margin:0 0 16px;font-size:14px;}
+  .guia-alerta[hidden]{display:none;}
+  .guia-alerta .ga-ico{font-size:20px;line-height:1;}
+  .guia-alerta .ga-txt{flex:1;min-width:240px;}
+  .guia-alerta .ga-txt small{display:block;color:var(--text-secondary);font-size:12px;margin-top:2px;}
+  .guia-alerta button{border:1px solid rgba(255,90,95,.8);background:transparent;color:#FFD2D3;font:700 12.5px 'Montserrat',sans-serif;padding:8px 14px;border-radius:9px;cursor:pointer;}
+  .guia-alerta button:hover{background:rgba(255,90,95,.18);}
   .mud-badge{background:var(--accent-mint);color:#02301C;border-radius:999px;padding:1px 8px;font-size:12px;font-weight:800;}
-  body.mode-tv .mud-btn{margin-left:0;font-size:15px;padding:9px 16px;}
-  body.mode-tv header{gap:12px;flex-wrap:nowrap;}
-  body.mode-tv .brand{flex:1 1 auto;min-width:0;}
-  body.mode-tv .brand .titles{min-width:0;}
-  body.mode-tv .brand .titles h1{font-size:24px !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  body.mode-tv header > *:not(.brand){flex:0 0 auto;}
-  body.mode-tv .mud-btn{font-size:14px !important;padding:8px 13px !important;}
-  body.mode-tv .mode-toggle button{padding:8px 15px !important;}
-  body.mode-tv .tv-full .tv-full-txt{display:none;}
+  body.mode-tv .mud-btn{margin-left:0;font-size:15px;padding:9px 18px;}
   .mud-panel{position:fixed;inset:0;z-index:9500;overflow:auto;background:var(--bg-0);color:var(--text-primary);}
   .mud-panel[hidden]{display:none;}
   .mud-inner{max-width:1400px;margin:0 auto;padding:24px 32px 48px;}
@@ -570,9 +553,8 @@
       <p>Clientes ativos · Lista de Parceiros de Negócios</p>
     </div>
   </div>
-  <div class="tv-meta" id="tvMeta"><span id="tvStamp"></span><button type="button" id="tvFull" class="tv-full" title="Tela cheia">⛶<span class="tv-full-txt"> Tela cheia</span></button></div>
+  <div class="tv-meta" id="tvMeta"><span id="tvStamp"></span><button type="button" id="tvFull" class="tv-full" title="Tela cheia">⛶ Tela cheia</button></div>
   <button type="button" class="mud-btn" id="btnMud" hidden title="Histórico de mudanças entre os relatórios">Mudanças <span class="mud-badge" id="mudBadge" hidden></span></button>
-  <button type="button" class="mud-btn guia-btn" id="btnGuia" hidden title="Clientes cadastrados com transportadora diferente do Guia de Transportadoras">Fora do guia <span class="mud-badge red" id="guiaBadge"></span></button>
   <div class="mode-toggle" id="modeToggle">
     <button data-mode="individual" class="active">Modo Individual</button>
     <button data-mode="tv">Modo TV</button>
@@ -701,16 +683,11 @@
   <div class="mud-inner">
     <div class="mud-top">
       <div>
-        <h2>Acompanhamento de cadastros</h2>
-        <div class="mud-tabs" role="tablist">
-          <button type="button" role="tab" data-aba="mud" class="on" id="tabMud">Histórico de mudanças</button>
-          <button type="button" role="tab" data-aba="guia" id="tabGuia">Fora do guia <span class="mud-badge red" id="guiaTabBadge"></span></button>
-        </div>
+        <h2>Histórico de mudanças</h2>
+        <p class="mud-sub">Cada relatório novo é comparado com o anterior. As regras são as mesmas do mapa: ativos, clientes "C" e transportadoras autorizadas.</p>
       </div>
       <button type="button" class="mud-close" id="mudClose" aria-label="Fechar">✕</button>
     </div>
-    <div id="abaMud">
-    <p class="mud-sub">Cada relatório novo é comparado com o anterior. As regras são as mesmas do mapa: ativos, clientes "C" e transportadoras autorizadas.</p>
     <div class="mud-filters">
       <label>Período<select id="mudPeriodo">
         <option value="ultima">Última atualização</option>
@@ -723,9 +700,9 @@
       </select></label>
       <label>Transportadora<select id="mudTransp"></select></label>
       <label class="grow">Buscar<input type="text" id="mudBusca" placeholder="Código, cliente ou cidade..."></label>
-      <label class="mud-only" id="mudOnlyWrap" title="Mostrar só os cadastros que não seguem o Guia de Transportadoras"><input type="checkbox" id="mudOnlyGuia"> Só fora do guia</label>
       <button type="button" class="mud-csv" id="mudCsv">Baixar planilha (.csv)</button>
     </div>
+    <div class="guia-alerta" id="mudAlerta" hidden></div>
     <div class="mud-analise">
       <div class="mud-card">
         <div class="mud-card-head">
@@ -748,26 +725,6 @@
     </div>
     <div class="mud-kpis" id="mudKpis"></div>
     <div id="mudLista"></div>
-    </div>
-    <div id="abaGuia" hidden>
-      <p class="mud-sub">Clientes do mapa cadastrados com uma transportadora diferente da indicada no <b>Guia de Transportadoras por Estado</b> (cadastro SAP). O estado considerado é o da cidade do cliente.</p>
-      <div class="mud-filters">
-        <label>Estado<select id="guiaUf"></select></label>
-        <label>Transportadora cadastrada<select id="guiaTransp"></select></label>
-        <label class="grow">Buscar<input type="text" id="guiaBusca" placeholder="Código, cliente ou cidade..."></label>
-        <button type="button" class="mud-csv" id="guiaCsv">Baixar planilha (.csv)</button>
-      </div>
-      <div class="guia-kpis" id="guiaKpis"></div>
-      <div class="mud-analise guia-analise">
-        <div class="mud-card"><div class="mud-card-head"><h3>Por estado</h3><span class="mud-card-sub">transportadora indicada no guia × cadastrada</span></div><div class="mud-tr-list" id="guiaPorUf"></div></div>
-        <div class="mud-card"><div class="mud-card-head"><h3>Por transportadora cadastrada</h3><span class="mud-card-sub">clientes fora do guia</span></div><div class="mud-tr-list" id="guiaPorTransp"></div></div>
-      </div>
-      <div class="mud-evento" id="guiaLista"></div>
-      <details class="guia-ref">
-        <summary>Ver o guia vigente (27 estados)</summary>
-        <div id="guiaTabela"></div>
-      </details>
-    </div>
   </div>
 </section>
 <div class="mud-tip" id="mudTip" hidden></div>
@@ -1140,7 +1097,6 @@ function initDashboard(){
   if(GENERATED_AT) document.getElementById("footerInfo").textContent =
     `Gerado em ${GENERATED_AT.toLocaleString("pt-BR")}` + (NOTE ? ` · Filtros: ${NOTE}` : "") + ` · Apis Flora · Base de municípios: IBGE`;
   drawBaseMap();
-  try{ atualizarBotaoGuia(); }catch(_){ /* ainda carregando: chamado de novo no fim do script */ }
   renderCorrections();
   render();
   Map3D.start();
@@ -1865,7 +1821,7 @@ function atualizarCarimboTV(){
   const el = document.getElementById("tvStamp");
   if(!GENERATED_AT){ el.textContent = ""; return; }
   const dias = (Date.now() - GENERATED_AT.getTime()) / 86400000;
-  el.textContent = "Dados de " + GENERATED_AT.toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}) +
+  el.textContent = "Dados de " + GENERATED_AT.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}) +
     (dias > 8 ? " · ⚠ desatualizado" : "");
   el.classList.toggle("stamp-aviso", dias > 8);
 }
@@ -1934,7 +1890,9 @@ if(EMBEDDED){
    clientes "C" que mudaram (antes/depois: ativo, transportadora, cidade, UF).
    Aqui cada mudança é classificada com as regras atuais do mapa.
    ========================================================= */
-/* ---------- Guia de Transportadoras por Estado (cadastro SAP) ---------- */
+/* ---------- Guia de Transportadoras por Estado (cadastro SAP) ----------
+   Usado só para o alerta do histórico: cliente que entra, troca de transportadora
+   ou muda de cidade com uma transportadora diferente da indicada para o estado. */
 const GUIA_TRANSP = {
   AC:["F01785"], AP:["F01785"], AM:["F01785"], PA:["F01785"], RO:["F01785"], RR:["F01785"], TO:["F01785"],
   AL:["F01785"], BA:["F01785"], CE:["F03089"], MA:["F01785"], PB:["F01785"], PE:["F01785"], PI:["F01785"], RN:["F01785"], SE:["F01785"],
@@ -1943,21 +1901,20 @@ const GUIA_TRANSP = {
   PR:["F04527"], SC:["F04527"], RS:["F04527"]
 };
 const GUIA_ROT = {F01785:"Braspress", F03089:"Troca Transportes", F00141:"Rodonaves", F04958:"Ativa", F02800:"Movimente", F04527:"Expresso São Miguel"};
-const GUIA_NOTA = "SP: para algumas regiões do interior, utilizar Movimente – obrigatória consulta prévia à Logística antes do cadastro no SAP.";
 function guiaTexto(uf){ return (GUIA_TRANSP[uf]||[]).map(c=>GUIA_ROT[c]||c).join(" ou "); }
-// true = fora do guia, false = conforme, null = estado sem regra / não identificado. Compara pelo nome (os dois códigos da Ativa contam como Ativa).
+// true = fora do guia; compara pelo nome (os dois códigos da Ativa contam como Ativa)
 function foraDoGuia(nomeT, uf){
   const g = GUIA_TRANSP[uf]; if(!g || !nomeT) return null;
   return !g.map(nomeTransp).includes(nomeT);
 }
-function ufDaCidade(cidade, uf){ // só confere o guia quando o estado informado é válido (clientes do exterior vêm com "1", "EX"...)
+function ufDaCidade(cidade, uf){ // só confere quando o estado informado é válido (clientes do exterior vêm com "1", "EX"...)
   const u = String(uf||"").trim().toUpperCase();
   if(!UF_NOME[u]) return "";
   try{ const r = resolveCity(cidade, u); if(r && r.found && r.uf) return r.uf; }catch(_){}
   return u;
 }
 let HISTORICO = [];
-const mudFiltro = {tipos:new Set(["entrou","saiu","trocou","cidade","atencao"])};
+const mudFiltro = {tipos:new Set(["entrou","saiu","trocou","cidade","atencao"]), soGuia:false};
 const MUD_TIPOS = {
   entrou:{rot:"Entraram", um:"Entrou"}, saiu:{rot:"Saíram", um:"Saiu"}, trocou:{rot:"Trocaram de transportadora", um:"Trocou de transportadora"},
   cidade:{rot:"Mudaram de cidade", um:"Mudou de cidade"}, atencao:{rot:"Atenção: fora do mapa", um:"Atenção"}
@@ -1990,8 +1947,8 @@ function eventosClassificados(){
       const c = classificarMudanca(m, allow); if(!c) return null;
       const it = {...c, cod:m.c, nome:m.n};
       if((c.tipo==="entrou" || c.tipo==="trocou" || c.tipo==="cidade") && m.d){
-        const uf = ufDaCidade(m.d[2], m.d[3]), t = nomeTransp(m.d[1]);
-        if(foraDoGuia(t, uf)){ it.foraGuia = true; it.guiaTxt = guiaTexto(uf); it.ufGuia = uf; }
+        const uf = ufDaCidade(m.d[2], m.d[3]);
+        if(foraDoGuia(nomeTransp(m.d[1]), uf)){ it.foraGuia = true; it.guiaTxt = guiaTexto(uf); it.ufGuia = uf; }
       }
       return it;
     }).filter(Boolean);
@@ -2006,7 +1963,7 @@ function atualizarBotaoMud(){
   const n = ult ? ult.itens.length : 0;
   badge.hidden = !n; badge.textContent = n;
   btn.title = ult ? `Última atualização com mudanças: ${ult.data.toLocaleDateString("pt-BR")} · ${n} cliente(s)` : "Histórico de mudanças entre os relatórios";
-  if(!document.getElementById("mudPanel").hidden) mostrarAba(abaAtual);
+  if(!document.getElementById("mudPanel").hidden) renderMud();
 }
 const DIA = 86400000;
 function inicioSemana(d){ const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay()+6)%7)); return x; }   // segunda-feira
@@ -2045,9 +2002,8 @@ function mudEventosFiltrados(){
   let evs = eventosClassificados();
   if(per==="ultima"){ const u = evs.find(e=>!e.base && e.itens.length); evs = u ? [u] : []; }
   else { const iv = intervaloPeriodo(per); if(iv) evs = evs.filter(e=>e.data >= iv[0] && e.data < iv[1]); }
-  const soGuia = document.getElementById("mudOnlyGuia").checked;
   return evs.map(e=>({...e, todos:e.itens, itens:e.itens.filter(i=>
-    (!soGuia || i.foraGuia) &&
+    (!mudFiltro.soGuia || i.foraGuia) &&
     (!tr || i.transp===tr || i.tA===tr || i.tD===tr) &&
     (!q || normalize(`${i.cod} ${i.nome} ${i.cidade}`).includes(q)))}));
 }
@@ -2058,6 +2014,7 @@ function renderMud(){
   selT.innerHTML = `<option value="">Todas</option>` + [...nomes].sort().map(n=>`<option ${n===atual?"selected":""}>${esc(n)}</option>`).join("");
   const evs = mudEventosFiltrados();
   renderAnalise(evs);
+  renderAlertaGuia(evs);
   const tot = contarTipos(evs.flatMap(e=>e.itens));
   document.getElementById("mudKpis").innerHTML = Object.entries(MUD_TIPOS).map(([k,t])=>
     `<button type="button" class="mud-kpi t-${k} ${mudFiltro.tipos.has(k)?"":"off"}" data-tipo="${k}" aria-pressed="${mudFiltro.tipos.has(k)}">
@@ -2072,8 +2029,8 @@ function renderMud(){
     const nGuia = e.todos.filter(i=>i.foraGuia).length;
     const chips = Object.keys(MUD_TIPOS).filter(k=>n[k]).map(k=>`<span class="t-${k}"><i class="mud-dot"></i>${n[k]} ${MUD_TIPOS[k].rot.toLowerCase()}</span>`).join("") +
       (nGuia ? `<span class="guia-pill">⚠ ${nGuia} fora do guia</span>` : "");
-    const linhas = itens.map(i=>`<tr><td><span class="mud-tipo t-${i.tipo}"><i class="mud-dot"></i>${MUD_TIPOS[i.tipo].um}</span></td>
-      <td class="cod">${esc(i.cod)}</td><td title="${esc(i.nome)}">${esc(i.nome)}</td><td>${esc(i.cidade)}</td><td title="${esc(i.transp)}">${esc(i.transp)}</td><td class="det" title="${esc(i.det)}">${i.foraGuia ? `<span class="guia-pill" title="Guia indica ${esc(i.guiaTxt)} para ${esc(i.ufGuia)}">⚠ Fora do guia · guia: ${esc(i.guiaTxt)}</span> ` : ""}${esc(i.det)}</td></tr>`).join("");
+    const linhas = itens.map(i=>`<tr class="${i.foraGuia ? "row-guia" : ""}"><td><span class="mud-tipo t-${i.tipo}"><i class="mud-dot"></i>${MUD_TIPOS[i.tipo].um}</span></td>
+      <td class="cod">${esc(i.cod)}</td><td title="${esc(i.nome)}">${esc(i.nome)}</td><td>${esc(i.cidade)}</td><td title="${esc(i.transp)}">${esc(i.transp)}</td><td class="det" title="${esc(i.det)}">${i.foraGuia ? `<span class="guia-pill" title="O Guia de Transportadoras indica ${esc(i.guiaTxt)} para ${esc(i.ufGuia)}">⚠ Fora do guia: indicado ${esc(i.guiaTxt)}</span><br>` : ""}${esc(i.det)}</td></tr>`).join("");
     return `<div class="mud-evento"><div class="mud-ev-head"><b>${quando}</b><span class="arq">${esc(e.arquivo||"")} · ${fmt(e.clientes||0)} clientes "C"</span><span class="chips">${chips || "sem mudanças no mapa"}</span></div>
       ${linhas ? `<table class="mud-tab"><thead><tr><th>Tipo</th><th>Código</th><th>Cliente</th><th>Cidade</th><th>Transportadora</th><th>Detalhe</th></tr></thead><tbody>${linhas}</tbody></table>`
                : `<div class="mud-vazio">Nenhuma mudança com os filtros escolhidos.</div>`}</div>`;
@@ -2212,126 +2169,33 @@ document.getElementById("mudChartTransp").addEventListener("click", e=>{
   if(v && ![...sel.options].some(o=>o.value===v || o.textContent===v)) sel.insertAdjacentHTML("beforeend", `<option>${esc(v)}</option>`);
   sel.value = v; renderMud();
 });
-window.addEventListener("resize", ()=>{ if(!document.getElementById("mudPanel").hidden && abaAtual==="mud") renderMud(); });
+window.addEventListener("resize", ()=>{ if(!document.getElementById("mudPanel").hidden) renderMud(); });
 
-/* ---------- aba "Fora do guia": base atual do mapa × Guia de Transportadoras ---------- */
-let abaAtual = "mud";
-function divergenciasGuia(){
-  const lista = []; let naoAvaliados = 0, avaliados = 0;
-  (typeof RECORDS!=="undefined" && RECORDS || []).forEach(r=>{
-    const f = r.found ? foraDoGuia(r.t, r.uf) : null;
-    if(f===null){ naoAvaliados += r.n; return; }
-    avaliados += r.n;
-    if(f) (r.cl && r.cl.length ? r.cl : [["",""]]).forEach(([k,nm])=>lista.push({cod:k, nome:nm, cidade:r.cidade, uf:r.uf, transp:r.t, guia:guiaTexto(r.uf)}));
-  });
-  return {lista, naoAvaliados, avaliados};
-}
-function desdeQuando(){ // código -> data em que o cliente entrou/trocou/mudou para a situação atual (pelo histórico)
-  const m = new Map();
-  eventosClassificados().slice().reverse().forEach(e=>e.itens.forEach(i=>{ if(i.tipo==="entrou"||i.tipo==="trocou"||i.tipo==="cidade") m.set(i.cod, e.data); }));
-  return m;
-}
-function atualizarBotaoGuia(){
-  const n = divergenciasGuia().lista.length;
-  const b = document.getElementById("btnGuia");
-  b.hidden = !(typeof RECORDS!=="undefined" && RECORDS && RECORDS.length);
-  document.getElementById("guiaBadge").textContent = n ? fmt(n) : "";
-  document.getElementById("guiaTabBadge").textContent = n ? fmt(n) : "";
-  b.title = `${fmt(n)} cliente(s) cadastrado(s) com transportadora diferente do Guia de Transportadoras`;
-}
-function guiaFiltrada(){
-  const uf = document.getElementById("guiaUf").value, tr = document.getElementById("guiaTransp").value, q = normalize(document.getElementById("guiaBusca").value);
-  const d = divergenciasGuia();
-  return {...d, filtrada: d.lista.filter(x=>(!uf || x.uf===uf) && (!tr || x.transp===tr) && (!q || normalize(`${x.cod} ${x.nome} ${x.cidade}`).includes(q)))};
-}
-function renderGuia(){
-  const d = divergenciasGuia(), desde = desdeQuando();
-  const ufSel = document.getElementById("guiaUf"), trSel = document.getElementById("guiaTransp");
-  const ufAt = ufSel.value, trAt = trSel.value;
-  const ufs = [...new Set(d.lista.map(x=>x.uf))].sort(), trs = [...new Set(d.lista.map(x=>x.transp))].sort();
-  ufSel.innerHTML = `<option value="">Todos</option>` + ufs.map(u=>`<option value="${u}" ${u===ufAt?"selected":""}>${u} — ${esc(UF_NOME[u]||u)}</option>`).join("");
-  trSel.innerHTML = `<option value="">Todas</option>` + trs.map(t=>`<option ${t===trAt?"selected":""}>${esc(t)}</option>`).join("");
-  const g = guiaFiltrada(), L = g.filtrada;
-  // novos fora do guia na última atualização (pelo histórico)
+function renderAlertaGuia(evs){
+  const el = document.getElementById("mudAlerta");
+  const fora = evs.flatMap(e=>(e.todos||e.itens).filter(i=>i.foraGuia).map(i=>({...i, data:e.data})));
+  if(!fora.length && !mudFiltro.soGuia){ el.hidden = true; return; }
   const ult = eventosClassificados().find(e=>!e.base && e.itens.length);
-  const novos = ult ? ult.itens.filter(i=>i.foraGuia).length : null;
-  const pct = d.avaliados ? (d.lista.length/d.avaliados*100) : 0;
-  document.getElementById("guiaKpis").innerHTML = `
-    <div class="guia-kpi"><span class="k-lbl"><i class="mud-dot" style="--c:#FF5A5F"></i>Clientes fora do guia</span><span class="k-val">${fmt(d.lista.length)}</span><span class="k-sub">${pct.toLocaleString("pt-BR",{maximumFractionDigits:1})}% dos ${fmt(d.avaliados)} clientes avaliados</span></div>
-    <div class="guia-kpi"><span class="k-lbl">Estados com divergência</span><span class="k-val">${fmt(ufs.length)}</span><span class="k-sub">${ufs.join(", ") || "nenhum"}</span></div>
-    <div class="guia-kpi"><span class="k-lbl">Novos fora do guia</span><span class="k-val">${novos===null ? "—" : fmt(novos)}</span><span class="k-sub">${ult ? "na atualização de " + ult.data.toLocaleDateString("pt-BR") : "aparece com o histórico de mudanças"}</span></div>
-    <div class="guia-kpi"><span class="k-lbl">Não avaliados</span><span class="k-val">${fmt(d.naoAvaliados)}</span><span class="k-sub">cidade não localizada: sem estado para conferir</span></div>`;
-  // por estado
-  const porUf = new Map(); d.lista.forEach(x=>{ if(!porUf.has(x.uf)) porUf.set(x.uf, new Map()); const m = porUf.get(x.uf); m.set(x.transp,(m.get(x.transp)||0)+1); });
-  const ufRows = [...porUf.entries()].map(([u,m])=>({uf:u, n:[...m.values()].reduce((a,b)=>a+b,0), det:[...m.entries()].sort((a,b)=>b[1]-a[1])})).sort((a,b)=>b.n-a.n);
-  const maxU = Math.max(1, ...ufRows.map(r=>r.n));
-  document.getElementById("guiaPorUf").innerHTML = ufRows.length ? ufRows.map(r=>`
-    <button type="button" class="mud-tr ${ufAt && ufAt!==r.uf ? "dim" : ""}" data-uf="${r.uf}">
-      <span class="tr-top"><span class="tr-nm">${r.uf} · ${esc(UF_NOME[r.uf]||"")} <span class="guia-ok" style="font-weight:600">— guia: ${esc(guiaTexto(r.uf))}</span></span><span class="tr-v"><b>${fmt(r.n)}</b></span></span>
-      <span class="tr-bar" style="display:block"><i style="width:${(r.n/maxU*100).toFixed(1)}%;background:#FF5A5F"></i></span>
-      <span class="tr-meta">cadastrados com ${r.det.map(([t,v])=>`${esc(t)} (${v})`).join(" · ")}</span>
-    </button>`).join("") : `<div class="mud-vazio" style="padding:8px 0">Nenhum cliente fora do guia. 🎉</div>`;
-  // por transportadora cadastrada
-  const porT = new Map(); d.lista.forEach(x=>{ if(!porT.has(x.transp)) porT.set(x.transp, new Map()); const m = porT.get(x.transp); m.set(x.uf,(m.get(x.uf)||0)+1); });
-  const tRows = [...porT.entries()].map(([t,m])=>({t, n:[...m.values()].reduce((a,b)=>a+b,0), det:[...m.entries()].sort((a,b)=>b[1]-a[1])})).sort((a,b)=>b.n-a.n);
-  const maxT = Math.max(1, ...tRows.map(r=>r.n));
-  document.getElementById("guiaPorTransp").innerHTML = tRows.map(r=>`
-    <button type="button" class="mud-tr ${trAt && trAt!==r.t ? "dim" : ""}" data-t="${esc(r.t)}">
-      <span class="tr-top"><span class="tr-nm"><i class="mud-dot" style="--c:${corTransp(r.t)}"></i>${esc(r.t)}</span><span class="tr-v"><b>${fmt(r.n)}</b></span></span>
-      <span class="tr-bar" style="display:block"><i style="width:${(r.n/maxT*100).toFixed(1)}%;background:${corTransp(r.t)}"></i></span>
-      <span class="tr-meta">em ${r.det.map(([u,v])=>`${u} (${v})`).join(" · ")}</span>
-    </button>`).join("");
-  // lista
-  const ord = L.slice().sort((a,b)=>a.uf.localeCompare(b.uf) || a.transp.localeCompare(b.transp) || a.nome.localeCompare(b.nome,"pt-BR"));
-  document.getElementById("guiaLista").innerHTML = `<div class="mud-ev-head"><b>${fmt(L.length)} cliente(s) fora do guia</b><span class="arq">${L.length!==d.lista.length ? "com os filtros escolhidos" : "base atual do mapa"}</span></div>` +
-    (ord.length ? `<table class="mud-tab"><thead><tr><th>Código</th><th>Cliente</th><th>Cidade</th><th>Cadastrada</th><th>Guia indica</th><th>Desde</th></tr></thead><tbody>${ord.map(x=>{
-      const dt = desde.get(x.cod);
-      return `<tr><td class="cod">${esc(x.cod)}</td><td title="${esc(x.nome)}">${esc(x.nome)}</td><td>${esc(x.cidade)}/${x.uf}</td><td title="${esc(x.transp)}">${esc(x.transp)}</td><td><span class="guia-pill">${esc(x.guia)}</span></td><td class="det">${dt ? dt.toLocaleDateString("pt-BR") : "antes do histórico"}</td></tr>`; }).join("")}</tbody></table>`
-      : `<div class="mud-vazio">Nenhum cliente com os filtros escolhidos.</div>`);
-  // guia vigente
-  const regs = {}; Object.keys(GUIA_TRANSP).forEach(u=>{ const r = UF_REGIAO[u] || ""; (regs[r] = regs[r] || []).push(u); });
-  document.getElementById("guiaTabela").innerHTML = `<table class="mud-tab"><thead><tr><th>Região</th><th>Estado</th><th>Transportadora</th><th>Código SAP</th></tr></thead><tbody>${
-    Object.entries(regs).flatMap(([r,us])=>us.map(u=>`<tr><td>${esc(r)}</td><td class="cod">${u}</td><td>${esc(guiaTexto(u))}</td><td>${GUIA_TRANSP[u].join(" / ")}</td></tr>`)).join("")}</tbody></table>
-    <p class="guia-nota">* ${esc(GUIA_NOTA)}</p>`;
+  const nUlt = ult ? ult.itens.filter(i=>i.foraGuia).length : 0;
+  el.hidden = false;
+  el.innerHTML = `<span class="ga-ico">⚠</span>
+    <span class="ga-txt"><b>${fmt(fora.length)} cliente(s) com transportadora fora do Guia de Transportadoras</b> no período escolhido
+      <small>${nUlt ? `${nUlt} na última atualização (${ult.data.toLocaleDateString("pt-BR")}) · ` : ""}entradas, trocas de transportadora e mudanças de cidade em que a transportadora não é a indicada para o estado</small></span>
+    <button type="button" id="mudAlertaBtn">${mudFiltro.soGuia ? "Mostrar todas as mudanças" : "Ver só esses clientes"}</button>`;
 }
-function mostrarAba(aba){
-  abaAtual = aba;
-  document.getElementById("abaMud").hidden = aba!=="mud";
-  document.getElementById("abaGuia").hidden = aba!=="guia";
-  document.querySelectorAll("#mudPanel .mud-tabs button").forEach(b=>b.classList.toggle("on", b.dataset.aba===aba));
-  document.getElementById("tabMud").hidden = !HISTORICO.length;
-  if(aba==="guia") renderGuia(); else renderMud();
-}
-document.querySelector("#mudPanel .mud-tabs").addEventListener("click", e=>{ const b = e.target.closest("[data-aba]"); if(b) mostrarAba(b.dataset.aba); });
-document.getElementById("btnGuia").addEventListener("click", ()=>abrirMud("guia"));
-["guiaUf","guiaTransp"].forEach(id=>document.getElementById(id).addEventListener("change", renderGuia));
-document.getElementById("guiaBusca").addEventListener("input", renderGuia);
-document.getElementById("guiaPorUf").addEventListener("click", e=>{ const b = e.target.closest("[data-uf]"); if(!b) return; const s = document.getElementById("guiaUf"); s.value = s.value===b.dataset.uf ? "" : b.dataset.uf; renderGuia(); });
-document.getElementById("guiaPorTransp").addEventListener("click", e=>{ const b = e.target.closest("[data-t]"); if(!b) return; const s = document.getElementById("guiaTransp"); s.value = s.value===b.dataset.t ? "" : b.dataset.t; renderGuia(); });
-document.getElementById("guiaCsv").addEventListener("click", ()=>{
-  const desde = desdeQuando();
-  const lin = [["Código","Cliente","Cidade","UF","Transportadora cadastrada","Guia indica","Desde"]];
-  guiaFiltrada().filtrada.forEach(x=>{ const dt = desde.get(x.cod); lin.push([x.cod, x.nome, x.cidade, x.uf, x.transp, x.guia, dt ? dt.toLocaleDateString("pt-BR") : "antes do histórico"]); });
-  const csv = "﻿" + lin.map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(";")).join("\r\n");
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8"}));
-  a.download = `clientes-fora-do-guia-${new Date().toISOString().slice(0,10)}.csv`;
-  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+document.getElementById("mudAlerta").addEventListener("click", e=>{
+  if(!e.target.closest("#mudAlertaBtn")) return;
+  mudFiltro.soGuia = !mudFiltro.soGuia; renderMud();
 });
-if(window.claude) document.getElementById("guiaCsv").hidden = true;
 
-function abrirMud(aba){
-  document.getElementById("mudPanel").hidden = false; document.body.style.overflow = "hidden";
-  mostrarAba(aba==="guia" || !HISTORICO.length ? "guia" : "mud");
-}
+function abrirMud(){ document.getElementById("mudPanel").hidden = false; document.body.style.overflow = "hidden"; renderMud(); }
 function fecharMud(){ esconderTip(); document.getElementById("mudPanel").hidden = true; document.body.style.overflow = ""; }
-document.getElementById("btnMud").addEventListener("click", ()=>abrirMud("mud"));
+document.getElementById("btnMud").addEventListener("click", abrirMud);
 document.getElementById("mudClose").addEventListener("click", fecharMud);
 document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !document.getElementById("mudPanel").hidden) fecharMud(); });
 document.getElementById("mudPeriodo").addEventListener("change", e=>definirPeriodo(e.target.value));
 document.getElementById("mudTransp").addEventListener("change", renderMud);
 document.getElementById("mudBusca").addEventListener("input", renderMud);
-document.getElementById("mudOnlyGuia").addEventListener("change", renderMud);
 document.getElementById("mudKpis").addEventListener("click", e=>{
   const b = e.target.closest("[data-tipo]"); if(!b) return;
   const k = b.dataset.tipo;
@@ -2406,7 +2270,6 @@ if(!EMBEDDED && !window.claude){                    // HTML com dados embutidos 
   setInterval(()=>{ if(document.body.classList.contains("mode-tv")) atualizarCarimboTV(); }, 60*60*1000);
 }
 if(/(^|[#&])tv\b/i.test(location.hash.slice(1))) setMode("tv");
-if(typeof RECORDS!=="undefined" && RECORDS && RECORDS.length) atualizarBotaoGuia();
 </script>
 </body>
 </html>
