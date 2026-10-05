@@ -380,7 +380,7 @@
   .mud-kpi .k-val{display:block;font-size:32px;font-weight:800;margin-top:6px;}
   .mud-kpi.off{opacity:.38;}
   .mud-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 auto;}
-  .t-entrou{--c:#00D26A;} .t-saiu{--c:#FF6B6B;} .t-trocou{--c:#FAEB0A;} .t-cidade{--c:#7CC7FF;} .t-atencao{--c:#FFB454;}
+  .t-entrou{--c:#00A65A;} .t-saiu{--c:#A070F0;} .t-trocou{--c:#FAEB0A;} .t-cidade{--c:#7CC7FF;} .t-atencao{--c:#FFB454;}
   .mud-dot{background:var(--c);}
   .mud-evento{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;overflow:hidden;}
   .mud-ev-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;padding:14px 18px;border-bottom:1px solid var(--border);}
@@ -395,6 +395,54 @@
   .mud-tab td.det{color:var(--text-secondary);}
   .mud-tipo{display:inline-flex;align-items:center;gap:6px;font-weight:700;white-space:nowrap;}
   .mud-vazio{padding:16px 18px;color:var(--text-secondary);font-size:13.5px;}
+  /* análise: entradas/saídas no tempo e por transportadora (verde/roxo validados para daltonismo) */
+  .mud-analise{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;margin-bottom:16px;}
+  .mud-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:16px 18px;min-width:0;}
+  .mud-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+  .mud-card h3{margin:0;font-size:14px;text-transform:uppercase;letter-spacing:.04em;color:var(--accent-mint);}
+  .mud-card-sub{font-size:12px;color:var(--text-secondary);}
+  .mud-seg{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:3px;}
+  .mud-seg button{border:0;background:transparent;color:var(--text-secondary);font:700 12px 'Montserrat',sans-serif;padding:6px 12px;border-radius:999px;cursor:pointer;}
+  .mud-seg button.on{background:var(--btn);color:#fff;}
+  .mud-resumo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px;}
+  .mud-res{text-align:left;background:rgba(0,0,0,.14);border:1px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;color:var(--text-primary);font-family:'Montserrat',sans-serif;}
+  .mud-res:hover,.mud-res.on{border-color:var(--accent-mint);}
+  .mud-res .r-lbl{display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--label);}
+  .mud-res .r-nums{display:flex;align-items:baseline;gap:12px;margin-top:4px;font-size:13px;color:var(--text-secondary);}
+  .mud-res .r-nums b{font-size:22px;color:var(--text-primary);}
+  .mud-res .r-saldo{display:block;font-size:11.5px;color:var(--text-secondary);margin-top:2px;}
+  .mud-leg{display:flex;gap:16px;align-items:center;font-size:12px;color:var(--text-secondary);margin-bottom:4px;flex-wrap:wrap;}
+  .mud-leg span{display:inline-flex;align-items:center;gap:6px;}
+  .mud-leg .sw{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  .sw-ent{background:#00A65A;} .sw-sai{background:#A070F0;}
+  .mud-leg-nota{margin-left:auto;}
+  .mud-chart{position:relative;width:100%;}
+  .mud-chart svg{display:block;width:100%;height:auto;overflow:visible;}
+  .mud-chart .hit{fill:transparent;cursor:pointer;}
+  .mud-chart path,.mud-chart text,.mud-chart line{pointer-events:none;}
+  .mud-chart .hit:hover,.mud-chart .hit.sel{fill:rgba(255,255,255,.05);}
+  .mud-tr-list{display:flex;flex-direction:column;gap:4px;max-height:360px;overflow:auto;}
+  .mud-tr{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:8px;padding:8px 8px;color:var(--text-primary);font-family:'Montserrat',sans-serif;cursor:pointer;}
+  .mud-tr:hover{background:rgba(255,255,255,.04);}
+  .mud-tr.dim{opacity:.4;}
+  .mud-tr .tr-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .mud-tr .tr-nm{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mud-tr .tr-v{font-size:12.5px;color:var(--text-secondary);white-space:nowrap;}
+  .mud-tr .tr-v b{font-size:16px;color:var(--text-primary);}
+  .mud-tr .tr-bar{height:8px;border-radius:4px;background:var(--track);margin:6px 0 4px;overflow:hidden;}
+  .mud-tr .tr-bar i{display:block;height:100%;border-radius:0 4px 4px 0;}
+  .mud-tr .tr-meta{font-size:11.5px;color:var(--text-secondary);}
+  .mud-tip{position:fixed;z-index:9600;pointer-events:none;background:#0B3524;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--text-primary);box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:320px;}
+  .mud-tip[hidden]{display:none;}
+  .mud-tip b{display:block;margin-bottom:4px;}
+  .mud-tip .tl{display:flex;justify-content:space-between;gap:14px;color:var(--text-secondary);}
+  .mud-tip .tl span:last-child{color:var(--text-primary);font-weight:700;}
+  .mud-tip .ts{font-size:11.5px;color:var(--text-secondary);margin:2px 0 6px 12px;}
+  @media (max-width:1100px){ .mud-analise{grid-template-columns:1fr;} }
+  .mud-filters select{max-width:100%;}
+  @media (max-width:900px){ .mud-resumo{grid-template-columns:1fr;}
+    .mud-filters label{flex:1 1 100%;} .mud-filters select,.mud-filters input{min-width:0;width:100%;} .mud-csv{width:100%;}
+    .mud-evento{overflow-x:auto;} .mud-tab{min-width:640px;} }
   @media (max-width:900px){ .mud-kpis{grid-template-columns:repeat(2,minmax(0,1fr));} .mud-inner{padding:16px;} .mud-tab th:nth-child(4),.mud-tab td:nth-child(4){display:none;} }
 
   /* ===== Modo TV: tela única 1920×1080, sem rolagem, escalada para caber em qualquer TV (Full HD ou 4K) ===== */
@@ -631,6 +679,9 @@
     <div class="mud-filters">
       <label>Período<select id="mudPeriodo">
         <option value="ultima">Última atualização</option>
+        <option value="semana">Esta semana</option>
+        <option value="mes">Este mês</option>
+        <option value="mesant">Mês anterior</option>
         <option value="30">Últimos 30 dias</option>
         <option value="90">Últimos 90 dias</option>
         <option value="tudo" selected>Todo o histórico</option>
@@ -639,10 +690,31 @@
       <label class="grow">Buscar<input type="text" id="mudBusca" placeholder="Código, cliente ou cidade..."></label>
       <button type="button" class="mud-csv" id="mudCsv">Baixar planilha (.csv)</button>
     </div>
+    <div class="mud-analise">
+      <div class="mud-card">
+        <div class="mud-card-head">
+          <h3>Entradas e saídas no mapa</h3>
+          <div class="mud-seg" id="mudGran" role="group" aria-label="Agrupar por">
+            <button type="button" data-g="semana" class="on">Por semana</button><button type="button" data-g="mes">Por mês</button>
+          </div>
+        </div>
+        <div class="mud-resumo" id="mudResumo"></div>
+        <div class="mud-leg"><span><i class="sw sw-ent"></i>Entraram</span><span><i class="sw sw-sai"></i>Saíram</span><span class="mud-leg-nota" id="mudGranNota"></span></div>
+        <div class="mud-chart" id="mudChartTempo"></div>
+      </div>
+      <div class="mud-card">
+        <div class="mud-card-head">
+          <h3>Por transportadora</h3>
+          <span class="mud-card-sub" id="mudTranspSub"></span>
+        </div>
+        <div class="mud-tr-list" id="mudChartTransp"></div>
+      </div>
+    </div>
     <div class="mud-kpis" id="mudKpis"></div>
     <div id="mudLista"></div>
   </div>
 </section>
+<div class="mud-tip" id="mudTip" hidden></div>
 <footer id="footerInfo">Apis Flora · Base de municípios: IBGE</footer>
 </div>
 <div class="tooltip-overlay" id="tooltip"></div>
@@ -1814,9 +1886,9 @@ function classificarMudanca(m, allow){
   const a = m.a, d = m.d;
   const ok = s=> !!s && s[0]==="Y" && allow.has(s[1]);
   const inA = ok(a), inD = ok(d), cid = s=> s ? `${s[2]}${s[3] ? "/"+s[3] : ""}` : "";
-  if(inD && !inA) return {tipo:"entrou", transp:nomeTransp(d[1]), cidade:cid(d),
+  if(inD && !inA) return {tipo:"entrou", mot: !a ? "novo" : a[0]!=="Y" ? "reativado" : "lista", transp:nomeTransp(d[1]), cidade:cid(d),
     det: !a ? "Cliente novo" : a[0]!=="Y" ? "Cliente reativado" : `Antes com ${nomeTransp(a[1])}, fora da lista`};
-  if(inA && !inD) return {tipo:"saiu", transp:nomeTransp(a[1]), cidade:cid(a),
+  if(inA && !inD) return {tipo:"saiu", mot: !d ? "removido" : d[0]!=="Y" ? "inativado" : "lista", transp:nomeTransp(a[1]), cidade:cid(a),
     det: !d ? "Removido do cadastro" : d[0]!=="Y" ? "Cliente inativado" : !d[1] ? "Ficou sem transportadora" : `Passou para ${nomeTransp(d[1])}, fora da lista`};
   if(inA && inD){
     if(a[1]!==d[1] && nomeTransp(a[1])!==nomeTransp(d[1])) return {tipo:"trocou", transp:`${nomeTransp(a[1])} → ${nomeTransp(d[1])}`, cidade:cid(d), det:"", tA:nomeTransp(a[1]), tD:nomeTransp(d[1])};
@@ -1844,12 +1916,43 @@ function atualizarBotaoMud(){
   btn.title = ult ? `Última atualização com mudanças: ${ult.data.toLocaleDateString("pt-BR")} · ${n} cliente(s)` : "Histórico de mudanças entre os relatórios";
   if(!document.getElementById("mudPanel").hidden) renderMud();
 }
+const DIA = 86400000;
+function inicioSemana(d){ const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay()+6)%7)); return x; }   // segunda-feira
+function inicioMes(d){ return new Date(d.getFullYear(), d.getMonth(), 1); }
+function somaMeses(d, n){ return new Date(d.getFullYear(), d.getMonth()+n, 1); }
+function somaDias(d, n){ const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+function ddmm(d){ return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}); }
+const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+function intervaloPeriodo(v){
+  const hoje = new Date();
+  if(v==="semana"){ const i = inicioSemana(hoje); return [i, somaDias(i,7)]; }
+  if(v==="mes"){ const i = inicioMes(hoje); return [i, somaMeses(i,1)]; }
+  if(v==="mesant"){ const i = somaMeses(inicioMes(hoje),-1); return [i, inicioMes(hoje)]; }
+  if(v==="30" || v==="90"){ return [new Date(Date.now() - Number(v)*DIA), new Date(8.64e15)]; }
+  if(v==="intervalo" && mudFiltro.intervalo) return mudFiltro.intervalo;
+  return null;
+}
+function definirPeriodo(v, intervalo, rotulo){
+  const sel = document.getElementById("mudPeriodo");
+  let opt = sel.querySelector('option[value="intervalo"]');
+  if(v==="intervalo"){
+    if(!intervalo && !mudFiltro.intervalo) v = "tudo";
+    if(intervalo) mudFiltro.intervalo = intervalo;
+    if(v==="intervalo"){
+      if(!opt){ opt = document.createElement("option"); opt.value = "intervalo"; sel.appendChild(opt); }
+      if(rotulo) opt.textContent = rotulo;
+    }
+  }
+  if(v!=="intervalo" && opt) opt.remove();
+  sel.value = v;
+  renderMud();
+}
 function mudEventosFiltrados(){
   const per = document.getElementById("mudPeriodo").value, tr = document.getElementById("mudTransp").value;
   const q = normalize(document.getElementById("mudBusca").value);
   let evs = eventosClassificados();
   if(per==="ultima"){ const u = evs.find(e=>!e.base && e.itens.length); evs = u ? [u] : []; }
-  else if(per!=="tudo"){ const lim = Date.now() - Number(per)*86400000; evs = evs.filter(e=>e.data.getTime() >= lim); }
+  else { const iv = intervaloPeriodo(per); if(iv) evs = evs.filter(e=>e.data >= iv[0] && e.data < iv[1]); }
   return evs.map(e=>({...e, todos:e.itens, itens:e.itens.filter(i=>
     (!tr || i.transp===tr || i.tA===tr || i.tD===tr) &&
     (!q || normalize(`${i.cod} ${i.nome} ${i.cidade}`).includes(q)))}));
@@ -1860,6 +1963,7 @@ function renderMud(){
   const nomes = new Set(); eventosClassificados().forEach(e=>e.itens.forEach(i=>{ if(i.tA){ nomes.add(i.tA); nomes.add(i.tD); } else nomes.add(i.transp); }));
   selT.innerHTML = `<option value="">Todas</option>` + [...nomes].sort().map(n=>`<option ${n===atual?"selected":""}>${esc(n)}</option>`).join("");
   const evs = mudEventosFiltrados();
+  renderAnalise(evs);
   const tot = contarTipos(evs.flatMap(e=>e.itens));
   document.getElementById("mudKpis").innerHTML = Object.entries(MUD_TIPOS).map(([k,t])=>
     `<button type="button" class="mud-kpi t-${k} ${mudFiltro.tipos.has(k)?"":"off"}" data-tipo="${k}" aria-pressed="${mudFiltro.tipos.has(k)}">
@@ -1880,12 +1984,147 @@ function renderMud(){
   }).join("");
   document.getElementById("mudLista").innerHTML = html || `<div class="mud-evento"><div class="mud-vazio">Nenhuma atualização no período escolhido.</div></div>`;
 }
+/* ---------- análise: resumo, gráfico no tempo e ranking por transportadora ---------- */
+let mudGran = "semana";
+const COR_ENT = "#00A65A", COR_SAI = "#A070F0";
+function tipEl(){ return document.getElementById("mudTip"); }
+function mostrarTip(ev, html){
+  const t = tipEl(); t.innerHTML = html; t.hidden = false;
+  const r = t.getBoundingClientRect(); let x = ev.clientX + 14, y = ev.clientY + 14;
+  if(x + r.width > innerWidth - 8) x = ev.clientX - r.width - 14;
+  if(y + r.height > innerHeight - 8) y = ev.clientY - r.height - 14;
+  t.style.left = x + "px"; t.style.top = y + "px";
+}
+function esconderTip(){ tipEl().hidden = true; }
+function itensNoIntervalo(evs, ini, fim){ return evs.filter(e=>!e.base && e.data >= ini && e.data < fim).flatMap(e=>e.itens); }
+function resumoHtml(rot, v, itens, ativo){
+  const ent = itens.filter(i=>i.tipo==="entrou").length, sai = itens.filter(i=>i.tipo==="saiu").length, saldo = ent - sai;
+  return `<button type="button" class="mud-res ${ativo?"on":""}" data-per="${v}"><span class="r-lbl">${rot}</span>
+    <span class="r-nums"><span><b>${fmt(ent)}</b> entraram</span><span><b>${fmt(sai)}</b> saíram</span></span>
+    <span class="r-saldo">saldo ${saldo>0?"+":""}${fmt(saldo)} no mapa</span></button>`;
+}
+function porTransp(itens){ // contagem por nome -> {ganhos, perdas, novo, reativado, lista, trocaRec, saidas, trocaPerd}
+  const m = new Map(), g = n=>{ if(!m.has(n)) m.set(n,{nome:n,ganhos:0,perdas:0,novo:0,reativado:0,lista:0,trocaRec:0,saidas:0,trocaPerd:0}); return m.get(n); };
+  itens.forEach(i=>{
+    if(i.tipo==="entrou"){ const o = g(i.transp); o.ganhos++; o[i.mot]++; }
+    else if(i.tipo==="saiu"){ const o = g(i.transp); o.perdas++; o.saidas++; }
+    else if(i.tipo==="trocou"){ const a = g(i.tA), d = g(i.tD); d.ganhos++; d.trocaRec++; a.perdas++; a.trocaPerd++; }
+  });
+  return [...m.values()].sort((x,y)=>y.ganhos-x.ganhos || y.perdas-x.perdas || x.nome.localeCompare(y.nome,"pt-BR"));
+}
+function corTransp(n){ return (typeof COLOR!=="undefined" && COLOR.get && COLOR.get(n)) || OTHER_COLOR; }
+function renderAnalise(evsFiltrados){
+  const tr = document.getElementById("mudTransp").value, per = document.getElementById("mudPeriodo").value;
+  const todos = eventosClassificados().map(e=>({...e, itens: e.itens.filter(i=>!tr || i.transp===tr || i.tA===tr || i.tD===tr)}));
+  // resumo: semana atual, mês atual, mês anterior (respeitam o filtro de transportadora)
+  const iS = intervaloPeriodo("semana"), iM = intervaloPeriodo("mes"), iA = intervaloPeriodo("mesant");
+  document.getElementById("mudResumo").innerHTML =
+    resumoHtml("Esta semana", "semana", itensNoIntervalo(todos, ...iS), per==="semana") +
+    resumoHtml("Este mês", "mes", itensNoIntervalo(todos, ...iM), per==="mes") +
+    resumoHtml(`Mês anterior (${MESES[iA[0].getMonth()]})`, "mesant", itensNoIntervalo(todos, ...iA), per==="mesant");
+  desenharTempo(todos);
+  // ranking por transportadora no período escolhido (sem o filtro de transportadora, que vira destaque)
+  const per2 = evsFiltrados.flatMap(e=>e.todos || e.itens);
+  const lista = porTransp(per2);
+  const perTxt = document.getElementById("mudPeriodo").selectedOptions[0]?.textContent || "";
+  document.getElementById("mudTranspSub").textContent = `${perTxt.toLowerCase()} · entradas incluem trocas recebidas`;
+  const max = Math.max(1, ...lista.map(o=>o.ganhos));
+  const det = o=>[o.novo && `${o.novo} novo(s)`, o.reativado && `${o.reativado} reativado(s)`, o.lista && `${o.lista} vindo(s) de fora da lista`, o.trocaRec && `${o.trocaRec} troca(s) recebida(s)`,
+                  o.saidas && `${o.saidas} saída(s)`, o.trocaPerd && `${o.trocaPerd} troca(s) perdida(s)`].filter(Boolean).join(" · ");
+  document.getElementById("mudChartTransp").innerHTML = lista.length ? lista.map(o=>`
+    <button type="button" class="mud-tr ${tr && tr!==o.nome ? "dim" : ""}" data-t="${esc(o.nome)}" title="Clique para filtrar a lista por esta transportadora">
+      <span class="tr-top"><span class="tr-nm"><i class="mud-dot" style="--c:${corTransp(o.nome)}"></i>${esc(o.nome)}</span>
+        <span class="tr-v"><b>+${fmt(o.ganhos)}</b> · −${fmt(o.perdas)}</span></span>
+      <span class="tr-bar" style="display:block"><i style="width:${(o.ganhos/max*100).toFixed(1)}%;background:${corTransp(o.nome)}"></i></span>
+      <span class="tr-meta">${esc(det(o)) || "sem entradas"}</span>
+    </button>`).join("") : `<div class="mud-vazio" style="padding:8px 0">Nenhuma entrada ou saída no período escolhido.</div>`;
+}
+function desenharTempo(evs){
+  const el = document.getElementById("mudChartTempo");
+  const N = 12, hoje = new Date();
+  const fimAtual = mudGran==="semana" ? somaDias(inicioSemana(hoje),7) : somaMeses(inicioMes(hoje),1);
+  const baldes = [];
+  for(let k=N-1; k>=0; k--){
+    const ini = mudGran==="semana" ? somaDias(inicioSemana(hoje), -7*k) : somaMeses(inicioMes(hoje), -k);
+    const fim = mudGran==="semana" ? somaDias(ini,7) : somaMeses(ini,1);
+    const itens = itensNoIntervalo(evs, ini, fim);
+    const ent = itens.filter(i=>i.tipo==="entrou"), sai = itens.filter(i=>i.tipo==="saiu");
+    baldes.push({ini, fim, ent, sai,
+      rot: mudGran==="semana" ? ddmm(ini) : `${MESES[ini.getMonth()]}/${String(ini.getFullYear()).slice(2)}`,
+      longo: mudGran==="semana" ? `Semana de ${ddmm(ini)} a ${ddmm(somaDias(fim,-1))}` : `${MESES[ini.getMonth()]}/${ini.getFullYear()}`});
+  }
+  document.getElementById("mudGranNota").textContent = `últimas ${N} ${mudGran==="semana" ? "semanas" : "meses"} · clique numa barra para ver o período`;
+  const W = Math.max(320, el.clientWidth || 640), H = 230, mL = 30, mR = 6, mT = 16, mB = 26;
+  const maxE = Math.max(0, ...baldes.map(b=>b.ent.length)), maxS = Math.max(0, ...baldes.map(b=>b.sai.length));
+  const passo = v=>{ const c = [1,2,5,10,20,50,100,200,500,1000,2000,5000]; return c.find(x=>v/x<=4) || 10000; };
+  const st = passo(Math.max(maxE, maxS, 1));
+  const top = Math.max(st, Math.ceil(maxE/st)*st), bot = maxS ? Math.ceil(maxS/st)*st : 0;
+  const pH = H - mT - mB, y = v=> mT + (top - v) / (top + bot) * pH, y0 = y(0);
+  const band = (W - mL - mR) / N, bw = Math.min(26, band*0.5);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Clientes que entraram e saíram do mapa por ${mudGran}">`;
+  for(let v=-bot; v<=top; v+=st){
+    const yy = y(v).toFixed(1);
+    svg += `<line x1="${mL}" x2="${W-mR}" y1="${yy}" y2="${yy}" stroke="${v===0 ? "rgba(255,255,255,.35)" : "rgba(255,255,255,.08)"}" stroke-width="1"/>`;
+    svg += `<text x="${mL-6}" y="${(+yy+3.5).toFixed(1)}" text-anchor="end" font-size="10.5" fill="#9EC5B3">${fmt(Math.abs(v))}</text>`;
+  }
+  const barra = (x, h, cima, cor)=>{ // cantos arredondados só na ponta (4px), base reta na linha do zero
+    if(h <= 0) return "";
+    const r = Math.min(4, bw/2, h), x2 = x + bw;
+    return cima
+      ? `<path d="M${x},${y0} V${y0-h+r} Q${x},${y0-h} ${x+r},${y0-h} H${x2-r} Q${x2},${y0-h} ${x2},${y0-h+r} V${y0} Z" fill="${cor}"/>`
+      : `<path d="M${x},${y0} V${y0+h-r} Q${x},${y0+h} ${x+r},${y0+h} H${x2-r} Q${x2},${y0+h} ${x2},${y0+h-r} V${y0} Z" fill="${cor}"/>`;
+  };
+  const selIv = document.getElementById("mudPeriodo").value==="intervalo" && mudFiltro.intervalo;
+  baldes.forEach((b,i)=>{
+    const cx = mL + band*i + band/2, x = cx - bw/2;
+    const hE = y0 - y(b.ent.length), hS = y(-b.sai.length) - y0;
+    const sel = selIv && +selIv[0]===+b.ini;
+    svg += `<rect class="hit ${sel?"sel":""}" data-i="${i}" x="${(mL+band*i).toFixed(1)}" y="${mT}" width="${band.toFixed(1)}" height="${pH}" rx="6"/>`;
+    svg += barra(x, hE, true, COR_ENT) + barra(x, hS, false, COR_SAI);
+    if(i===N-1 || sel){ // rótulo direto só no período atual (ou no selecionado)
+      if(b.ent.length) svg += `<text x="${cx}" y="${(y0-hE-5).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">${b.ent.length}</text>`;
+      if(b.sai.length) svg += `<text x="${cx}" y="${(y0+hS+13).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">${b.sai.length}</text>`;
+    }
+    if(N <= 12 || i%2===0) svg += `<text x="${cx}" y="${H-8}" text-anchor="middle" font-size="10.5" fill="${i===N-1 ? "#FFFFFF" : "#9EC5B3"}">${b.rot}</text>`;
+  });
+  svg += `</svg>`;
+  el.innerHTML = svg;
+  const agrupa = arr=>{ const m = new Map(); arr.forEach(i=>m.set(i.transp,(m.get(i.transp)||0)+1)); return [...m.entries()].sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${esc(n)}: ${v}`).join("<br>"); };
+  el.querySelectorAll(".hit").forEach(r=>{
+    const b = baldes[+r.dataset.i];
+    r.addEventListener("mousemove", ev=>mostrarTip(ev, `<b>${b.longo}</b>
+      <div class="tl"><span><i class="mud-dot" style="--c:${COR_ENT}"></i> Entraram</span><span>${b.ent.length}</span></div>${b.ent.length ? `<div class="ts">${agrupa(b.ent)}</div>` : ""}
+      <div class="tl"><span><i class="mud-dot" style="--c:${COR_SAI}"></i> Saíram</span><span>${b.sai.length}</span></div>${b.sai.length ? `<div class="ts">${agrupa(b.sai)}</div>` : ""}`));
+    r.addEventListener("mouseleave", esconderTip);
+    r.addEventListener("click", ()=>{ esconderTip(); definirPeriodo("intervalo", [b.ini, b.fim], b.longo); });
+  });
+}
+document.getElementById("mudGran").addEventListener("click", e=>{
+  const b = e.target.closest("button[data-g]"); if(!b) return;
+  mudGran = b.dataset.g;
+  document.querySelectorAll("#mudGran button").forEach(x=>x.classList.toggle("on", x===b));
+  renderMud();
+});
+document.getElementById("mudResumo").addEventListener("click", e=>{
+  const b = e.target.closest("[data-per]"); if(!b) return;
+  definirPeriodo(document.getElementById("mudPeriodo").value===b.dataset.per ? "tudo" : b.dataset.per);
+});
+document.getElementById("mudChartTransp").addEventListener("click", e=>{
+  const b = e.target.closest("[data-t]"); if(!b) return;
+  const sel = document.getElementById("mudTransp");
+  const v = sel.value===b.dataset.t ? "" : b.dataset.t;
+  if(v && ![...sel.options].some(o=>o.value===v || o.textContent===v)) sel.insertAdjacentHTML("beforeend", `<option>${esc(v)}</option>`);
+  sel.value = v; renderMud();
+});
+window.addEventListener("resize", ()=>{ if(!document.getElementById("mudPanel").hidden) renderMud(); });
+
 function abrirMud(){ document.getElementById("mudPanel").hidden = false; document.body.style.overflow = "hidden"; renderMud(); }
-function fecharMud(){ document.getElementById("mudPanel").hidden = true; document.body.style.overflow = ""; }
+function fecharMud(){ esconderTip(); document.getElementById("mudPanel").hidden = true; document.body.style.overflow = ""; }
 document.getElementById("btnMud").addEventListener("click", abrirMud);
 document.getElementById("mudClose").addEventListener("click", fecharMud);
 document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !document.getElementById("mudPanel").hidden) fecharMud(); });
-["mudPeriodo","mudTransp"].forEach(id=>document.getElementById(id).addEventListener("change", renderMud));
+document.getElementById("mudPeriodo").addEventListener("change", e=>definirPeriodo(e.target.value));
+document.getElementById("mudTransp").addEventListener("change", renderMud);
 document.getElementById("mudBusca").addEventListener("input", renderMud);
 document.getElementById("mudKpis").addEventListener("click", e=>{
   const b = e.target.closest("[data-tipo]"); if(!b) return;
