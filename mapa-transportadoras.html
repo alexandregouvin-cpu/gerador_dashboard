@@ -380,7 +380,7 @@
   .mud-kpi .k-val{display:block;font-size:32px;font-weight:800;margin-top:6px;}
   .mud-kpi.off{opacity:.38;}
   .mud-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 auto;}
-  .t-entrou{--c:#00A65A;} .t-saiu{--c:#A070F0;} .t-trocou{--c:#FAEB0A;} .t-cidade{--c:#7CC7FF;} .t-atencao{--c:#FFB454;}
+  .t-entrou{--c:#00A65A;} .t-saiu{--c:#FF5A5F;} .t-trocou{--c:#FAEB0A;} .t-cidade{--c:#7CC7FF;} .t-atencao{--c:#FFB454;}
   .mud-dot{background:var(--c);}
   .mud-evento{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;overflow:hidden;}
   .mud-ev-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;padding:14px 18px;border-bottom:1px solid var(--border);}
@@ -414,7 +414,7 @@
   .mud-leg{display:flex;gap:16px;align-items:center;font-size:12px;color:var(--text-secondary);margin-bottom:4px;flex-wrap:wrap;}
   .mud-leg span{display:inline-flex;align-items:center;gap:6px;}
   .mud-leg .sw{width:12px;height:12px;border-radius:3px;display:inline-block;}
-  .sw-ent{background:#00A65A;} .sw-sai{background:#A070F0;}
+  .sw-ent{background:#00A65A;} .sw-sai{background:#FF5A5F;}
   .mud-leg-nota{margin-left:auto;}
   .mud-chart{position:relative;width:100%;}
   .mud-chart svg{display:block;width:100%;height:auto;overflow:visible;}
@@ -1986,7 +1986,7 @@ function renderMud(){
 }
 /* ---------- análise: resumo, gráfico no tempo e ranking por transportadora ---------- */
 let mudGran = "semana";
-const COR_ENT = "#00A65A", COR_SAI = "#A070F0";
+const COR_ENT = "#00A65A", COR_SAI = "#FF5A5F";
 function tipEl(){ return document.getElementById("mudTip"); }
 function mostrarTip(ev, html){
   const t = tipEl(); t.innerHTML = html; t.hidden = false;
