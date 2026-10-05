@@ -377,9 +377,12 @@
   .mud-panel{position:fixed;inset:0;z-index:9500;overflow:auto;background:var(--bg-0);color:var(--text-primary);}
   .mud-panel[hidden]{display:none;}
   .mud-inner{max-width:1400px;margin:0 auto;padding:24px 32px 48px;}
+  .mud-panel.tv .mud-inner{max-width:none;padding:20px 28px 40px;}
   .mud-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
   .mud-top h2{margin:0;font-size:24px;color:var(--accent-mint);text-transform:uppercase;letter-spacing:.03em;}
   .mud-sub{margin:6px 0 0;color:var(--text-secondary);font-size:13.5px;}
+  .mud-acoes{display:flex;align-items:center;gap:10px;flex:0 0 auto;}
+  .mud-full{height:40px;padding:0 14px;}
   .mud-close{border:1px solid var(--border);background:var(--bg-2);color:var(--text-primary);width:40px;height:40px;border-radius:10px;font-size:18px;cursor:pointer;flex:0 0 auto;}
   .mud-filters{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin:20px 0 16px;}
   .mud-filters label{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--label);}
@@ -686,7 +689,10 @@
         <h2>Histórico de mudanças</h2>
         <p class="mud-sub">Cada relatório novo é comparado com o anterior. As regras são as mesmas do mapa: ativos, clientes "C" e transportadoras autorizadas.</p>
       </div>
-      <button type="button" class="mud-close" id="mudClose" aria-label="Fechar">✕</button>
+      <div class="mud-acoes">
+        <button type="button" class="tv-full mud-full" id="mudFull" title="Tela cheia">⛶ <span class="full-txt">Tela cheia</span></button>
+        <button type="button" class="mud-close" id="mudClose" aria-label="Fechar">✕</button>
+      </div>
     </div>
     <div class="mud-filters">
       <label>Período<select id="mudPeriodo">
@@ -1847,6 +1853,7 @@ function setMode(mode){
   try{ history.replaceState(null, "", tv ? "#tv" : location.pathname + location.search); }catch(_){}
   window.scrollTo(0,0);
   fitStage();
+  if(!document.getElementById("mudPanel").hidden) ajustarPainelTV();
   Map3D.home();
   if(LEGEND_STATE) renderMapLegend();
 }
@@ -1854,10 +1861,18 @@ document.getElementById("modeToggle").addEventListener("click", e=>{
   const b = e.target.closest("button[data-mode]"); if(!b) return;
   setMode(b.dataset.mode);
 });
-document.getElementById("tvFull").addEventListener("click", ()=>{
+function alternarTelaCheia(){
   const el = document.documentElement;
   if(document.fullscreenElement){ document.exitFullscreen && document.exitFullscreen().catch(()=>{}); return; }
   if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+}
+document.getElementById("tvFull").addEventListener("click", alternarTelaCheia);
+document.getElementById("mudFull").addEventListener("click", alternarTelaCheia);
+document.addEventListener("fullscreenchange", ()=>{
+  const cheia = !!document.fullscreenElement;
+  document.querySelector("#mudFull .full-txt").textContent = cheia ? "Sair da tela cheia" : "Tela cheia";
+  document.getElementById("mudFull").title = cheia ? "Sair da tela cheia" : "Tela cheia";
+  ajustarPainelTV();
 });
 window.addEventListener("resize", fitStage);
 document.addEventListener("fullscreenchange", ()=>setTimeout(fitStage, 60));
@@ -2169,7 +2184,7 @@ document.getElementById("mudChartTransp").addEventListener("click", e=>{
   if(v && ![...sel.options].some(o=>o.value===v || o.textContent===v)) sel.insertAdjacentHTML("beforeend", `<option>${esc(v)}</option>`);
   sel.value = v; renderMud();
 });
-window.addEventListener("resize", ()=>{ if(!document.getElementById("mudPanel").hidden) renderMud(); });
+window.addEventListener("resize", ()=>{ if(!document.getElementById("mudPanel").hidden){ ajustarPainelTV(); renderMud(); } });
 
 function renderAlertaGuia(evs){
   const el = document.getElementById("mudAlerta");
@@ -2188,7 +2203,14 @@ document.getElementById("mudAlerta").addEventListener("click", e=>{
   mudFiltro.soGuia = !mudFiltro.soGuia; renderMud();
 });
 
-function abrirMud(){ document.getElementById("mudPanel").hidden = false; document.body.style.overflow = "hidden"; renderMud(); }
+/* Modo TV: o painel ocupa a tela toda, com letras maiores (escala pela largura da tela, desenho base de 1500px) */
+function ajustarPainelTV(){
+  const p = document.getElementById("mudPanel");
+  const tv = document.body.classList.contains("mode-tv");
+  p.classList.toggle("tv", tv);
+  p.style.zoom = tv ? String(Math.max(1, Math.min(2.6, innerWidth/1500))) : "";
+}
+function abrirMud(){ document.getElementById("mudPanel").hidden = false; document.body.style.overflow = "hidden"; ajustarPainelTV(); renderMud(); }
 function fecharMud(){ esconderTip(); document.getElementById("mudPanel").hidden = true; document.body.style.overflow = ""; }
 document.getElementById("btnMud").addEventListener("click", abrirMud);
 document.getElementById("mudClose").addEventListener("click", fecharMud);
