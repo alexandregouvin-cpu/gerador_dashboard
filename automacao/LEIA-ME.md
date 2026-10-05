@@ -19,8 +19,8 @@ As regras continuam automáticas, aplicadas pelo próprio mapa:
 
 ## 1. Montar a pasta no SharePoint
 
-Crie uma pasta numa biblioteca do SharePoint (ex.: `Logística/Mapa Transportadoras`),
-ao lado da pasta do painel de entregas, com esta estrutura:
+Crie uma pasta em qualquer biblioteca do SharePoint (ex.: `Logística/Mapa Transportadoras`).
+Ela é independente do painel de entregas e pode ficar em outro lugar. A estrutura é esta:
 
 ```
 Mapa Transportadoras\
