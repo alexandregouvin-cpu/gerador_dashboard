@@ -722,7 +722,7 @@
         <div class="mud-card-head">
           <h3>Entradas e saídas no mapa</h3>
           <div class="mud-seg" id="mudGran" role="group" aria-label="Agrupar por">
-            <button type="button" data-g="semana" class="on">Por semana</button><button type="button" data-g="mes">Por mês</button>
+            <button type="button" data-g="dia" class="on">Por dia</button><button type="button" data-g="semana">Por semana</button><button type="button" data-g="mes">Por mês</button>
           </div>
         </div>
         <div class="mud-resumo" id="mudResumo"></div>
@@ -2061,7 +2061,7 @@ function renderMud(){
   document.getElementById("mudLista").innerHTML = html || `<div class="mud-evento"><div class="mud-vazio">Nenhuma atualização no período escolhido.</div></div>`;
 }
 /* ---------- análise: resumo, gráfico no tempo e ranking por transportadora ---------- */
-let mudGran = "semana";
+let mudGran = "dia";
 const COR_ENT = "#00A65A", COR_SAI = "#FF5A5F";
 function tipEl(){ return document.getElementById("mudTip"); }
 function mostrarTip(ev, html){
@@ -2117,20 +2117,31 @@ function renderAnalise(evsFiltrados){
 }
 function desenharTempo(evs){
   const el = document.getElementById("mudChartTempo");
-  const N = 12, hoje = new Date();
-  const fimAtual = mudGran==="semana" ? somaDias(inicioSemana(hoje),7) : somaMeses(inicioMes(hoje),1);
+  const N = mudGran==="dia" ? 14 : 12, hoje = new Date();
+  const DIAS_SEM = ["dom","seg","ter","qua","qui","sex","sáb"];
   const baldes = [];
   for(let k=N-1; k>=0; k--){
-    const ini = mudGran==="semana" ? somaDias(inicioSemana(hoje), -7*k) : somaMeses(inicioMes(hoje), -k);
-    const fim = mudGran==="semana" ? somaDias(ini,7) : somaMeses(ini,1);
+    let ini, fim, rot, rot2 = "", longo;
+    if(mudGran==="dia"){
+      ini = somaDias(new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()), -k); fim = somaDias(ini,1);
+      rot = ddmm(ini); rot2 = DIAS_SEM[ini.getDay()];
+      longo = ini.toLocaleDateString("pt-BR",{weekday:"long", day:"2-digit", month:"2-digit", year:"numeric"});
+    } else if(mudGran==="semana"){
+      ini = somaDias(inicioSemana(hoje), -7*k); fim = somaDias(ini,7);
+      rot = ddmm(ini); rot2 = "a " + ddmm(somaDias(fim,-1));          // semana de segunda a domingo
+      longo = `Semana de ${ddmm(ini)} a ${ddmm(somaDias(fim,-1))}`;
+    } else {
+      ini = somaMeses(inicioMes(hoje), -k); fim = somaMeses(ini,1);
+      rot = `${MESES[ini.getMonth()]}/${String(ini.getFullYear()).slice(2)}`;
+      longo = `${MESES[ini.getMonth()]}/${ini.getFullYear()}`;
+    }
     const itens = itensNoIntervalo(evs, ini, fim);
     const ent = itens.filter(i=>i.tipo==="entrou"), sai = itens.filter(i=>i.tipo==="saiu");
-    baldes.push({ini, fim, ent, sai,
-      rot: mudGran==="semana" ? ddmm(ini) : `${MESES[ini.getMonth()]}/${String(ini.getFullYear()).slice(2)}`,
-      longo: mudGran==="semana" ? `Semana de ${ddmm(ini)} a ${ddmm(somaDias(fim,-1))}` : `${MESES[ini.getMonth()]}/${ini.getFullYear()}`});
+    baldes.push({ini, fim, ent, sai, rot, rot2, longo});
   }
-  document.getElementById("mudGranNota").textContent = `últimas ${N} ${mudGran==="semana" ? "semanas" : "meses"} · clique numa barra para ver o período`;
-  const W = Math.max(320, el.clientWidth || 640), H = 230, mL = 30, mR = 6, mT = 16, mB = 26;
+  document.getElementById("mudGranNota").textContent =
+    (mudGran==="dia" ? `últimos ${N} dias` : mudGran==="semana" ? `últimas ${N} semanas (segunda a domingo)` : `últimos ${N} meses`) + " · clique numa barra para ver o período";
+  const W = Math.max(320, el.clientWidth || 640), mB = mudGran==="mes" ? 26 : 38, H = 230 + (mB - 26), mL = 30, mR = 6, mT = 16;
   const maxE = Math.max(0, ...baldes.map(b=>b.ent.length)), maxS = Math.max(0, ...baldes.map(b=>b.sai.length));
   const passo = v=>{ const c = [1,2,5,10,20,50,100,200,500,1000,2000,5000]; return c.find(x=>v/x<=4) || 10000; };
   const st = passo(Math.max(maxE, maxS, 1));
@@ -2161,7 +2172,9 @@ function desenharTempo(evs){
       if(b.ent.length) svg += `<text x="${cx}" y="${(y0-hE-5).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">${b.ent.length}</text>`;
       if(b.sai.length) svg += `<text x="${cx}" y="${(y0+hS+13).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">${b.sai.length}</text>`;
     }
-    if(N <= 12 || i%2===0) svg += `<text x="${cx}" y="${H-8}" text-anchor="middle" font-size="10.5" fill="${i===N-1 ? "#FFFFFF" : "#9EC5B3"}">${b.rot}</text>`;
+    const corRot = i===N-1 ? "#FFFFFF" : "#9EC5B3";
+    if(b.rot2) svg += `<text x="${cx}" y="${H-20}" text-anchor="middle" font-size="10.5" fill="${corRot}">${b.rot}</text><text x="${cx}" y="${H-7}" text-anchor="middle" font-size="9.5" fill="${corRot}" opacity=".85">${b.rot2}</text>`;
+    else svg += `<text x="${cx}" y="${H-8}" text-anchor="middle" font-size="10.5" fill="${corRot}">${b.rot}</text>`;
   });
   svg += `</svg>`;
   el.innerHTML = svg;
